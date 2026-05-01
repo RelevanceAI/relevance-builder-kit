@@ -1,7 +1,48 @@
 #!/bin/bash
-# Statusline for Claude Code -- full session stats.
+# Statusline for Claude Code -- config-driven.
+#
+# Reads .claude/statusline.conf (KEY=true/false per option) and renders only
+# the sections set to true. If the conf file is missing, falls back to a
+# minimal default (project + branch + model). Each section keeps its original
+# colour / emoji / formatting -- the conf only toggles which sections render.
+#
+# Available toggles (defaults shown for the no-conf fallback):
+#   show_project=true
+#   show_branch=true
+#   show_vim=false
+#   show_model=true
+#   show_context=false
+#   show_cost=false
+#   show_duration=false
+#   show_lines=false
+#   show_output_tokens=false
+#   show_cache=false
+#   show_rate_limits=false
 
 INPUT=$(cat)
+
+# --- Load conf (or apply minimal defaults) -------------------------------
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_DIR="$(dirname "$SCRIPT_DIR")"
+CONF="$REPO_DIR/.claude/statusline.conf"
+
+# Defaults (used when conf file is missing OR a toggle is absent)
+show_project=true
+show_branch=true
+show_vim=false
+show_model=true
+show_context=false
+show_cost=false
+show_duration=false
+show_lines=false
+show_output_tokens=false
+show_cache=false
+show_rate_limits=false
+
+if [ -f "$CONF" ]; then
+  # shellcheck disable=SC1090
+  . "$CONF"
+fi
 
 extract() {
   echo "$INPUT" | python3 -c "
@@ -116,19 +157,19 @@ except: print('')
 # ── Build the line ──────────────────────────────────────────────
 
 # Project
-[ -n "$NAME" ]   && printf "\033[38;5;214m⚡ %s\033[0m " "$NAME"
+[ "$show_project" = "true" ] && [ -n "$NAME" ]   && printf "\033[38;5;214m⚡ %s\033[0m " "$NAME"
 
 # Git branch
-[ -n "$BRANCH" ] && printf "\033[38;5;117m🌿 %s\033[0m " "$BRANCH"
+[ "$show_branch" = "true" ] && [ -n "$BRANCH" ] && printf "\033[38;5;117m🌿 %s\033[0m " "$BRANCH"
 
 # Vim mode
-[ -n "$VIM_MODE" ] && printf "\033[38;5;229m✎ %s\033[0m " "$VIM_MODE"
+[ "$show_vim" = "true" ] && [ -n "$VIM_MODE" ] && printf "\033[38;5;229m✎ %s\033[0m " "$VIM_MODE"
 
 # Model
-printf "\033[38;5;141m🤖 %s\033[0m" "${MODEL:-unknown}"
+[ "$show_model" = "true" ] && printf "\033[38;5;141m🤖 %s\033[0m" "${MODEL:-unknown}"
 
 # Context window bar
-if [ -n "$CTX_PCT" ] && [ "$CTX_PCT" != "0" ]; then
+if [ "$show_context" = "true" ] && [ -n "$CTX_PCT" ] && [ "$CTX_PCT" != "0" ]; then
   printf "  🧠 "
   progress_bar "$CTX_PCT"
   if [ -n "$CTX_SIZE" ]; then
@@ -139,43 +180,51 @@ if [ -n "$CTX_PCT" ] && [ "$CTX_PCT" != "0" ]; then
 fi
 
 # Cost
-COST_FMT=$(fmt_cost "$COST")
-[ -n "$COST_FMT" ] && printf "  \033[38;5;208m💰 %s\033[0m" "$COST_FMT"
+if [ "$show_cost" = "true" ]; then
+  COST_FMT=$(fmt_cost "$COST")
+  [ -n "$COST_FMT" ] && printf "  \033[38;5;208m💰 %s\033[0m" "$COST_FMT"
+fi
 
 # Duration
-if [ -n "$DURATION_MS" ] && [ "$DURATION_MS" != "0" ]; then
+if [ "$show_duration" = "true" ] && [ -n "$DURATION_MS" ] && [ "$DURATION_MS" != "0" ]; then
   DUR=$(fmt_duration "$DURATION_MS")
   printf "  \033[38;5;244m⏱ %s\033[0m" "$DUR"
 fi
 
 # Lines changed
-if [ -n "$LINES_ADDED" ] || [ -n "$LINES_REMOVED" ]; then
+if [ "$show_lines" = "true" ] && { [ -n "$LINES_ADDED" ] || [ -n "$LINES_REMOVED" ]; }; then
   [ "${LINES_ADDED:-0}" != "0" ]   && printf "  \033[38;5;82m+%s\033[0m" "$LINES_ADDED"
   [ "${LINES_REMOVED:-0}" != "0" ] && printf " \033[38;5;196m-%s\033[0m" "$LINES_REMOVED"
 fi
 
 # Output tokens
-OUT_FMT=$(fmt_tokens "$OUT_TOKENS")
-[ -n "$OUT_FMT" ] && [ "$OUT_FMT" != "0" ] && printf "  \033[38;5;75m✍ %s\033[0m" "$OUT_FMT"
+if [ "$show_output_tokens" = "true" ]; then
+  OUT_FMT=$(fmt_tokens "$OUT_TOKENS")
+  [ -n "$OUT_FMT" ] && [ "$OUT_FMT" != "0" ] && printf "  \033[38;5;75m✍ %s\033[0m" "$OUT_FMT"
+fi
 
 # Cache hits
-CACHE_FMT=$(fmt_tokens "$CACHE_READ")
-[ -n "$CACHE_FMT" ] && [ "$CACHE_FMT" != "0" ] && printf "  \033[38;5;43m⚡cache %s\033[0m" "$CACHE_FMT"
+if [ "$show_cache" = "true" ]; then
+  CACHE_FMT=$(fmt_tokens "$CACHE_READ")
+  [ -n "$CACHE_FMT" ] && [ "$CACHE_FMT" != "0" ] && printf "  \033[38;5;43m⚡cache %s\033[0m" "$CACHE_FMT"
+fi
 
 # Rate limits (only shown if present)
-if [ -n "$RATE_5H" ]; then
-  COUNTDOWN_5H=$(fmt_countdown "$RATE_5H_RESETS")
-  printf "  \033[38;5;245m5h: "
-  progress_bar "$RATE_5H"
-  [ -n "$COUNTDOWN_5H" ] && printf " \033[38;5;245m↺%s\033[0m" "$COUNTDOWN_5H"
-  printf "\033[0m"
-fi
-if [ -n "$RATE_7D" ]; then
-  COUNTDOWN_7D=$(fmt_countdown "$RATE_7D_RESETS")
-  printf "  \033[38;5;245m7d: "
-  progress_bar "$RATE_7D"
-  [ -n "$COUNTDOWN_7D" ] && printf " \033[38;5;245m↺%s\033[0m" "$COUNTDOWN_7D"
-  printf "\033[0m"
+if [ "$show_rate_limits" = "true" ]; then
+  if [ -n "$RATE_5H" ]; then
+    COUNTDOWN_5H=$(fmt_countdown "$RATE_5H_RESETS")
+    printf "  \033[38;5;245m5h: "
+    progress_bar "$RATE_5H"
+    [ -n "$COUNTDOWN_5H" ] && printf " \033[38;5;245m↺%s\033[0m" "$COUNTDOWN_5H"
+    printf "\033[0m"
+  fi
+  if [ -n "$RATE_7D" ]; then
+    COUNTDOWN_7D=$(fmt_countdown "$RATE_7D_RESETS")
+    printf "  \033[38;5;245m7d: "
+    progress_bar "$RATE_7D"
+    [ -n "$COUNTDOWN_7D" ] && printf " \033[38;5;245m↺%s\033[0m" "$COUNTDOWN_7D"
+    printf "\033[0m"
+  fi
 fi
 
 printf "\n"

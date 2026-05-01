@@ -25,6 +25,7 @@ venv/
 .claude/projects/
 .claude/sessions/
 .claude/settings.local.json
+.claude/statusline.conf
 
 # Local-only files
 .local/
