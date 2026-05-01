@@ -104,8 +104,7 @@ Not all knowledge decays at the same rate. Treat these differently:
 ```
 relevance-builder-kit/
   CLAUDE.md                      # Root briefing (identity, philosophy, routing)
-  playbooks/                     # Use-case patterns
-    use-cases/                   # Use-case playbooks (research, outreach, phone, etc.)
+  playbooks/                     # Use-case playbooks (research, outreach, phone, enrichment, etc.)
   build-kit/                     # Deep reference material
     agents/                      # Single-agent reference
       prompt/                    # System prompt design, agent variables, placeholder tools
@@ -260,7 +259,7 @@ Must include:
 |-------|--------|
 | Platform behavior discovered | `.claude/rules/PLATFORM_MECHANICS.md` |
 | New build pattern identified | `.claude/skills/agent-build-patterns/` |
-| New agent type built successfully | Consider adding to `playbooks/use-cases/` |
+| New agent type built successfully | Consider adding to `playbooks/` |
 | Best practice proved in production | `build-kit/` relevant file |
 
 ---

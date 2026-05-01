@@ -156,7 +156,7 @@ Each finding carries a confidence score with justification: "4/5: verified again
 
 ## Related Files
 
-- `playbooks/use-cases/synthesis-agent-patterns.md` - Patterns for synthesizing research into briefings
-- `playbooks/use-cases/enrichment-agent-patterns.md` - Patterns for data enrichment agents
+- `playbooks/synthesis-agent-patterns.md` - Patterns for synthesizing research into briefings
+- `playbooks/enrichment-agent-patterns.md` - Patterns for data enrichment agents
 - `.claude/skills/agent-build-patterns/unit-of-action.md` - Why research and synthesis should be separate agents
 - `.claude/rules/BUILD_PRACTICES.md` - General agent building practices

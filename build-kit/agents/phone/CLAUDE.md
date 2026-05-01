@@ -19,5 +19,5 @@ Come here when:
 
 - `build-kit/agents/CLAUDE.md` -- agents hub
 - `build-kit/agents/agent-write-operations.md` -- the runtime-field write gotcha specific to phone agents
-- `playbooks/use-cases/phone-agent.md` -- use-case playbook (when to build a phone agent)
+- `playbooks/phone-agent.md` -- use-case playbook (when to build a phone agent)
 - `.claude/rules/PLATFORM_MECHANICS.md` § "Phone Agent Runtime Config"

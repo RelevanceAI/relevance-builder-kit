@@ -127,6 +127,6 @@ Corollary: `relevance_get_agent_tools` on a workforce orchestrator returns empty
 ## See Also
 
 - `.claude/rules/PLATFORM_MECHANICS.md` § "Workforce Architecture" -- headline rules
-- `playbooks/use-cases/multi-agent-orchestration.md` -- orchestrator design reference (mental model, 7+1 generative principles, capability contracts, scale guardrails, dispatch decision)
+- `playbooks/multi-agent-orchestration.md` -- orchestrator design reference (mental model, 7+1 generative principles, capability contracts, scale guardrails, dispatch decision)
 - `build-kit/agents/tools/parallel-tool-calls.md` -- Parallel Tool Calls early-access details
 - The `managing-relevance-workforces` skill is loaded on demand by the remote MCP for CRUD operations

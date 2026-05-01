@@ -90,5 +90,5 @@ This mapping is manual and requires at least one test webhook to have been sent 
 
 ## Related Files
 
-- `playbooks/use-cases/enrichment-agent-patterns.md` -- Enrichment patterns (tool chains, async webhooks)
+- `playbooks/enrichment-agent-patterns.md` -- Enrichment patterns (tool chains, async webhooks)
 - `build-kit/integrations/template.md` -- Integration doc template

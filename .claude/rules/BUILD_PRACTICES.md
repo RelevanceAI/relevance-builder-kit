@@ -230,7 +230,7 @@ When creating a new agent / tool / workforce, create a testing rubric BEFORE bui
 
 ## Workforce / Orchestrator Patterns
 
-**Full orchestrator design reference:** `playbooks/use-cases/multi-agent-orchestration.md`. Mental model, generative principles, capability contracts, scale guardrails, dispatch pattern decision, approval handling, failure catalog. Load that first when designing an orchestrator.
+**Full orchestrator design reference:** `playbooks/multi-agent-orchestration.md`. Mental model, generative principles, capability contracts, scale guardrails, dispatch pattern decision, approval handling, failure catalog. Load that first when designing an orchestrator.
 
 **Platform mechanics for workforces** (edge types, `additionalProperties` rules, `relevance_update_workforce` merge semantics, parallel tool calls, mental model): `PLATFORM_MECHANICS.md` § "Workforce Architecture" + `build-kit/workforces/workforce-patterns.md`.
 

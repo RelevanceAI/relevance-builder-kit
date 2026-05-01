@@ -218,8 +218,8 @@ All three tables should be shared across agents in the workforce to prevent drif
 
 ## Related Files
 
-- `playbooks/use-cases/localisation-agent-patterns.md` -- Use-case playbook for building localization workforces
+- `playbooks/localisation-agent-patterns.md` -- Use-case playbook for building localization workforces
 - `build-kit/templates/locale-guide.template.md` -- Fill-in-the-blanks template for creating per-locale guidelines
 - `build-kit/agents/knowledge/crm-knowledge-architecture.md` -- Peer pattern: CRM knowledge architecture (same structural approach, different domain)
 - `build-kit/agents/knowledge/knowledge-tables.md` -- Knowledge table API reference (CRUD operations, filters, Python helpers)
-- `playbooks/use-cases/outreach-agent-patterns.md` -- Outreach patterns that localization augments
+- `playbooks/outreach-agent-patterns.md` -- Outreach patterns that localization augments

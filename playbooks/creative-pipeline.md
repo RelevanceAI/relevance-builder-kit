@@ -201,6 +201,6 @@ If your system needs two quality tiers (free vs premium, draft vs final), do not
 
 ## Related Files
 
-- `playbooks/use-cases/multi-agent-orchestration.md` -- Multi-agent patterns (model selection, phase separation)
+- `playbooks/multi-agent-orchestration.md` -- Multi-agent patterns (model selection, phase separation)
 - `.claude/skills/agent-build-patterns/build-philosophy.md` -- Code Over LLM pattern (relevant to randomization steps)
 - `.claude/rules/BUILD_PRACTICES.md` -- Tool step naming and temperature conventions

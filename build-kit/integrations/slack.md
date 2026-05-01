@@ -314,7 +314,7 @@ When Slack "isn't working", check in this order -- most common failures first:
 
 ## Reference Implementations
 
-- `playbooks/use-cases/synthesis-agent-patterns.md` -- Slack-sourced data synthesis with source attribution
+- `playbooks/synthesis-agent-patterns.md` -- Slack-sourced data synthesis with source attribution
 
 Marketplace templates: https://marketplace.relevanceai.com/integrations/slack
 

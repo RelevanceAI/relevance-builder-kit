@@ -67,7 +67,7 @@ Routing for the most common workflows. Each domain owns specific concerns.
 
 | Need | Go to |
 |------|-------|
-| Use case playbooks | `playbooks/use-cases/` |
+| Use case playbooks | `playbooks/` |
 | Documentation patterns + cross-cutting troubleshooting | `build-kit/patterns/` |
 | Phone agents | `build-kit/agents/phone/phone-agents.md` |
 | Evals and monitoring | `build-kit/evals-and-monitoring/` |

@@ -178,7 +178,7 @@ Bad: "see the tools reference"
 Good: "`build-kit/agents/tools/platform-tool-gotchas.md`"
 
 Bad: "the knowledge base"
-Good: "`playbooks/use-cases/` -- 10 use-case playbooks"
+Good: "`playbooks/` -- 10 use-case playbooks"
 
 Exact paths are executable. Descriptions require interpretation.
 

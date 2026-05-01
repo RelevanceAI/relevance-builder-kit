@@ -1,6 +1,6 @@
 # Workforces
 
-Multi-agent orchestration: edge configuration, lifecycle, setup gotchas. The "how" to `playbooks/use-cases/multi-agent-orchestration.md`'s "what".
+Multi-agent orchestration: edge configuration, lifecycle, setup gotchas. The "how" to `playbooks/multi-agent-orchestration.md`'s "what".
 
 ## Contents
 
@@ -21,6 +21,6 @@ Come here when:
 
 - `build-kit/CLAUDE.md` -- build-kit hub
 - `build-kit/agents/` -- single-agent reference (when one agent is enough)
-- `playbooks/use-cases/multi-agent-orchestration.md` -- orchestrator design philosophy
+- `playbooks/multi-agent-orchestration.md` -- orchestrator design philosophy
 - `.claude/rules/PLATFORM_MECHANICS.md` § "Workforce Architecture" -- platform mechanics
 - `.claude/rules/BUILD_PRACTICES.md` § "Workforce / Orchestrator Patterns" -- highest-impact build rules

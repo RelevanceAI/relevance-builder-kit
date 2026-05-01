@@ -219,7 +219,7 @@ All locale decisions are made here, not in the generator.
 
 - `build-kit/agents/knowledge/locale-knowledge-architecture.md` -- Glossary design, locale guideline structure, LQA evaluation framework, language region coverage
 - `build-kit/templates/locale-guide.template.md` -- Fill-in-the-blanks template for creating per-locale guidelines
-- `playbooks/use-cases/outreach-agent-patterns.md` -- Outbound messaging patterns that localization augments
-- `playbooks/use-cases/content-marketing-seo.md` -- Content pipeline patterns (localization can be added as a downstream stage)
+- `playbooks/outreach-agent-patterns.md` -- Outbound messaging patterns that localization augments
+- `playbooks/content-marketing-seo.md` -- Content pipeline patterns (localization can be added as a downstream stage)
 - `.claude/rules/BUILD_PRACTICES.md` -- Workforce patterns (batch vs fan-out, autopilot rules, dead-end status clarity)
 - `build-kit/agents/knowledge/knowledge-tables.md` -- Knowledge table API reference for glossary and guideline tables

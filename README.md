@@ -183,7 +183,7 @@ If a learning is specific to your environment, team, or one build -- credentials
 | Build practice, tool / agent pattern | `.claude/rules/BUILD_PRACTICES.md` |
 | Documentation or repo convention | `.claude/rules/DOC_RULES.md` |
 | Reusable workflow worth automating | A new skill in `.claude/skills/` |
-| Use-case architecture playbook (e.g. phone agent for X) | `playbooks/use-cases/` |
+| Use-case architecture playbook (e.g. phone agent for X) | `playbooks/` |
 | Integration-specific gotcha (HubSpot, Salesforce, Slack, etc.) | `build-kit/integrations/` |
 | Tool transformation, sandbox auth, state-mapping, voice, AI Browser | `build-kit/agents/tools/` |
 | Knowledge table API + knowledge architecture (CRM, locale) | `build-kit/agents/knowledge/` |

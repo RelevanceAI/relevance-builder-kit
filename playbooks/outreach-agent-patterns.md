@@ -159,5 +159,5 @@ How to hit limits: cut throat-clearing, use contractions, one idea per sentence,
 
 ## Related Files
 
-- `playbooks/use-cases/research-agent-patterns.md` - Research patterns (upstream of outreach)
-- `playbooks/use-cases/enrichment-agent-patterns.md` - Enrichment patterns that feed outreach
+- `playbooks/research-agent-patterns.md` - Research patterns (upstream of outreach)
+- `playbooks/enrichment-agent-patterns.md` - Enrichment patterns that feed outreach

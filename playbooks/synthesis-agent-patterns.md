@@ -171,6 +171,6 @@ Despite Notion failing, the synthesis was excellent - demonstrating graceful deg
 
 ## Related Files
 
-- `playbooks/use-cases/research-agent-patterns.md` - Patterns for the gathering phase
+- `playbooks/research-agent-patterns.md` - Patterns for the gathering phase
 - `.claude/skills/agent-build-patterns/build-philosophy.md` - Separate Finding from Doing principle
 - `.claude/skills/agent-build-patterns/unit-of-action.md` - Why gathering and synthesis should be separate agents
