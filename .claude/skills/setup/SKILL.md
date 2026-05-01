@@ -45,31 +45,33 @@ git checkout .mcp.json
 
 The kit ships pre-wired -- no local plugin or submodule to initialize.
 
-### Step 2: Project Naming
+### Step 2: Name This Folder
 
 Ask the user:
 
-> Choose a name for your project. This will:
-> - Rename this folder to `relevance-builder-{name}`
-> - Set the MCP server name to `relevance-ai-{name}`
+> Choose a name for this folder. The name is appended as a suffix to the kit name, so the folder becomes `relevance-builder-kit-{suffix}` and the MCP server becomes `relevance-ai-kit-{suffix}`.
 >
-> Examples: `personal`, `team`, `marketing`
+> Examples: `dev`, `prod`, `staging`, `personal`, `team`
+>
+> So `dev` gives you `relevance-builder-kit-dev` / `relevance-ai-kit-dev`.
 
-Sanitize the name: lowercase, hyphens for spaces, alphanumeric and hyphens only.
+Sanitize the suffix: lowercase, hyphens for spaces, alphanumeric and hyphens only. Strip any leading hyphen the user may include (e.g. `-dev` -> `dev`).
 
-Rename the folder:
+Rename the folder (suffix appended, do NOT replace `kit`):
 ```bash
-mv /path/to/relevance-builder /path/to/relevance-builder-{name}
+mv /path/to/relevance-builder-kit /path/to/relevance-builder-kit-{suffix}
 ```
+
+If the current folder is already `relevance-builder-kit-something`, treat the existing suffix as already-set and skip the rename unless the user wants to change it.
 
 ### Step 3: Customize .mcp.json
 
-Ensure `.mcp.json` contains the project-specific server name:
+Ensure `.mcp.json` contains the project-specific server name (suffix appended to `relevance-ai-kit`, NOT replacing `kit`):
 
 ```json
 {
   "mcpServers": {
-    "relevance-ai-{name}": {
+    "relevance-ai-kit-{suffix}": {
       "type": "http",
       "url": "https://mcp.relevanceai.com"
     }
@@ -77,11 +79,86 @@ Ensure `.mcp.json` contains the project-specific server name:
 }
 ```
 
-The server name `relevance-ai-{name}` ensures each project folder has an independent MCP connection.
+The server name `relevance-ai-kit-{suffix}` ensures each clone of the kit has an independent MCP connection.
 
 ### Step 4: Configure Statusline
 
-The statusline is configured in the project-level `.claude/settings.json` (committed to the repo), so it works automatically on pull. Run `bash scripts/setup-statusline.sh` if you need to re-setup or clean up a stale user-level entry.
+The statusline is wired into the project-level `.claude/settings.json` (committed). It runs `scripts/statusline.sh`, which is config-driven via `.claude/statusline.conf`. If the conf file is missing, the statusline shows a **minimal default**: project + branch + model. The setup walks the user through each optional section one at a time, showing an example, and writes the choices into `.claude/statusline.conf`.
+
+Tell the user:
+
+> The default statusline is minimal -- just project, branch, and model. I'll walk you through the optional sections one at a time. Say `yes` to add a section, `no` to skip. You can re-run `/setup` later to change your mind.
+>
+> Default looks like this:
+> ```
+> ⚡ relevance-builder-kit-dev 🌿 main 🤖 Opus 4.7
+> ```
+
+Then ask the user about each toggle in order. For each one, show the example, ask yes/no, and remember the answer. **Keep the same exact style as the current statusline** (colours, emojis, spacing). Do not invent new styles -- just toggle whether each existing section renders.
+
+Toggles to walk through (in this order):
+
+1. **Vim mode** -- shows current vim mode if vim mode is enabled in Claude Code.
+   Example: `✎ INSERT`
+   Conf key: `show_vim`
+
+2. **Context window** -- coloured progress bar of context used, with token count.
+   Example: `🧠 ████░░░░░░ 42% (420k/1000k tok)`
+   Conf key: `show_context`
+
+3. **Cost** -- total session cost in USD.
+   Example: `💰 $0.123`
+   Conf key: `show_cost`
+
+4. **Duration** -- total session wall-clock time.
+   Example: `⏱ 1m15s`
+   Conf key: `show_duration`
+
+5. **Lines changed** -- lines added / removed this session.
+   Example: `+12 -3`
+   Conf key: `show_lines`
+
+6. **Output tokens** -- total tokens generated this session.
+   Example: `✍ 12k`
+   Conf key: `show_output_tokens`
+
+7. **Cache hits** -- cache-read tokens this session.
+   Example: `⚡cache 50k`
+   Conf key: `show_cache`
+
+8. **Rate limits** -- 5h and 7d rate limit usage bars (Pro / Max only).
+   Example: `5h: ████░░░░░░ 42% ↺2h15m  7d: ██░░░░░░░░ 18% ↺5d12h`
+   Conf key: `show_rate_limits`
+
+After collecting all answers, write `.claude/statusline.conf` with one `KEY=value` line per toggle. Always include the three always-on lines (`show_project=true`, `show_branch=true`, `show_model=true`) for clarity, even though they are also the script defaults:
+
+```bash
+cat > .claude/statusline.conf <<EOF
+show_project=true
+show_branch=true
+show_vim={true|false}
+show_model=true
+show_context={true|false}
+show_cost={true|false}
+show_duration={true|false}
+show_lines={true|false}
+show_output_tokens={true|false}
+show_cache={true|false}
+show_rate_limits={true|false}
+EOF
+```
+
+After writing the file, show the user a one-line preview of what their statusline will look like with their selections and tell them to restart Claude Code (or wait for the next refresh) to see it live.
+
+If the user wants to skip the walk-through entirely, just leave `.claude/statusline.conf` absent -- the script falls back to the minimal default.
+
+If the user picks **everything**, the result looks like:
+
+```
+⚡ relevance-builder-kit-dev 🌿 main ✎ INSERT 🤖 Opus 4.7  🧠 ████░░░░░░ 42% (420k/1000k tok)  💰 $0.123  ⏱ 1m15s  +12 -3  ✍ 12k  ⚡cache 50k  5h: ██░░░░░░░░ 18% ↺2h15m  7d: █░░░░░░░░░ 8% ↺5d12h
+```
+
+Run `bash scripts/setup-statusline.sh` if the project-level `.claude/settings.json` ever loses its `statusLine` entry (e.g. someone hand-edited it). That script is for re-wiring the settings entry only, not for the conf toggles above.
 
 ### Step 5: Offer ccd Alias
 
