@@ -17,5 +17,6 @@ Come here when:
 ## See Also
 
 - `CLAUDE.md` (root) -- kit overview and routing
-- `.claude/skills/setup/` -- automated first-time setup skill
+- `setup.sh` (kit root) -- interactive first-time setup script
+- `.claude/skills/setup/` -- redirect skill that points users at `setup.sh`
 - `.claude/rules/` -- governance rules auto-loaded by Claude Code

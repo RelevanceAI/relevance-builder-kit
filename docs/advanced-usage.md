@@ -23,13 +23,13 @@ Get notified when Claude finishes a task so you can multitask. Add to `~/.claude
 
 ## 3. Statusline
 
-The statusline shows your project folder name, git branch, and model at the bottom of the terminal:
+The statusline shows your project folder name, git branch, and model at the bottom of the terminal by default:
 
 ```
-relevance-builder-team  branch main  claude-sonnet-4-6
+⚡ relevance-builder-kit-team 🌿 main 🤖 Opus 4.7
 ```
 
-The project name comes from your folder name (set during `setup.sh`). To reconfigure: `bash scripts/setup-statusline.sh`
+The project name comes from your folder name (set during `bash setup.sh`). Re-run `bash setup.sh` to walk through the optional sections (vim mode, context bar, cost, duration, lines changed, output tokens, cache, rate limits); choices are written to `.claude/statusline.conf`. If `.claude/settings.json` ever loses its `statusLine` entry (e.g. someone hand-edited it), run `bash scripts/setup-statusline.sh` to re-wire it.
 
 ## 4. `/clear` Discipline
 
@@ -118,7 +118,7 @@ Invoke skills with slash commands:
 - `/document-workforce` -- document a workforce and all its agents
 - `/improve` -- capture a single mid-flow insight as a well-scoped PR
 - `/capture-learning` -- end-of-session retro: extract reusable learnings, update knowledge base or PR
-- `/setup` -- first-time kit setup walkthrough
+- `bash setup.sh` -- first-time kit setup script (run in terminal, not a slash command)
 
 Skills load into the conversation context, so Claude follows those patterns for the rest of the session.
 

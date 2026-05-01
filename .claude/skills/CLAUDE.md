@@ -11,7 +11,7 @@ Slash-command skills for the agent build lifecycle. Invoke with `/{skill-name}`.
 | eval | `/eval` | Auto-generate eval test cases, run platform evals, golden sets, gate criteria |
 | agent-optimiser | `/agent-optimiser` | Analyze a Relevance AI agent or workforce for config, prompt, tool, and credit issues. Recommend ranked optimizations |
 | document-workforce | `/document-workforce` | Document a workforce and all its agents from platform config |
-| setup | `/setup` | First-time kit setup (MCP, OAuth, statusline) |
+| setup | `/setup` | Redirects to the interactive `bash setup.sh` script (run in terminal) for first-time kit setup |
 
 ## Knowledge and Compounding
 

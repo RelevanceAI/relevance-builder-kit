@@ -1,407 +1,524 @@
 #!/bin/bash
-# Relevance Builder Kit -- one-time setup
-# Run after cloning: bash setup.sh
+# Relevance Builder Kit -- First-Time Setup
 #
-# This script:
-#   1. Checks prerequisites
-#   2. Verifies .mcp.json points to the Relevance AI prod MCP server
-#   3. Asks for a project name and renames the kit folder
-#   4. Customizes .mcp.json with a project-specific server name
-#   5. Configures the Claude Code statusline
-#   6. Optionally adds a 'ccd' shell alias
-#   7. Optionally creates your first build folder
-#   8. Runs verification
+# Run from the kit root:   bash setup.sh
+# Idempotent. Safe to re-run any time.
+#
+# What it does:
+#   1. Checks prerequisites (python3, git, claude CLI)
+#   2. Verifies .mcp.json points to the prod Relevance AI MCP
+#   3. Names this clone (folder + MCP server suffix)
+#   4. Walks the statusline toggles
+#   5. Optional: ccd shell alias
+#   6. Optional: scaffolds your first build folder
+#   7. Runs verify-setup.sh
+#
+# After it finishes, start Claude Code in this folder and run /mcp
+# to authenticate with Relevance AI via OAuth.
 
 set -e
 
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
-SCRIPTS_DIR="$REPO_DIR/scripts"
+TOTAL_STEPS=7
 
-MIN_CLAUDE="2.1.3"
-MIN_PYTHON="3.10"
-
-echo "========================================="
-echo "  Relevance Builder Kit Setup"
-echo "========================================="
-echo ""
-
-# --- 1. Check prerequisites ---
-
-echo "Checking prerequisites..."
-
-MISSING=()
-
-if ! command -v python3 &>/dev/null; then
-  MISSING+=("python3")
-fi
-
-if ! command -v git &>/dev/null; then
-  MISSING+=("git")
-fi
-
-if ! command -v claude &>/dev/null; then
-  MISSING+=("claude CLI (install from claude.ai/claude-code)")
-fi
-
-if [ ${#MISSING[@]} -gt 0 ]; then
-  echo ""
-  echo "ERROR: Missing required tools:"
-  for m in "${MISSING[@]}"; do
-    echo "  - $m"
-  done
-  echo ""
-  echo "Install these and re-run setup."
-  exit 1
-fi
-
-echo "  python3: $(python3 --version 2>&1 | head -1)"
-echo "  git:     $(git --version)"
-echo "  claude:  $(claude --version 2>/dev/null || echo 'unknown')"
-
-CLAUDE_VERSION=$(claude --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-if [ -n "$CLAUDE_VERSION" ]; then
-  OLDEST=$(printf '%s\n%s\n' "$MIN_CLAUDE" "$CLAUDE_VERSION" | sort -V | head -1)
-  if [ "$OLDEST" != "$MIN_CLAUDE" ]; then
-    echo ""
-    echo "WARNING: Claude CLI $CLAUDE_VERSION is below minimum $MIN_CLAUDE. Run: claude update"
-  fi
-fi
-
-PY_VERSION=$(python3 --version 2>&1 | grep -oE '[0-9]+\.[0-9]+' | head -1)
-if [ -n "$PY_VERSION" ]; then
-  OLDEST_PY=$(printf '%s\n%s\n' "$MIN_PYTHON" "$PY_VERSION" | sort -V | head -1)
-  if [ "$OLDEST_PY" != "$MIN_PYTHON" ]; then
-    echo ""
-    echo "WARNING: Python $PY_VERSION is below recommended $MIN_PYTHON. Some scripts may not work correctly."
-  fi
-fi
-
-echo ""
-
-# --- 2. Verify MCP config ---
-
-echo "Verifying MCP configuration..."
-cd "$REPO_DIR"
-MCP_JSON="$REPO_DIR/.mcp.json"
-if [ ! -f "$MCP_JSON" ]; then
-  echo "ERROR: .mcp.json missing. Restore it from the kit before continuing:"
-  echo "       git checkout .mcp.json"
-  exit 1
-fi
-
-MCP_URL=$(python3 -c "
-import json, sys
-try:
-    d = json.load(open('$MCP_JSON'))
-    servers = d.get('mcpServers', {})
-    if not servers:
-        sys.exit(2)
-    print(next(iter(servers.values())).get('url', ''))
-except Exception:
-    sys.exit(2)
-" 2>/dev/null)
-
-if [ -z "$MCP_URL" ]; then
-  echo "ERROR: .mcp.json is malformed or has no mcpServers entries."
-  echo "       Restore it: git checkout .mcp.json"
-  exit 1
-fi
-
-if [[ "$MCP_URL" != *"mcp.relevanceai.com"* ]]; then
-  echo "WARNING: .mcp.json points to a non-default URL:"
-  echo "         $MCP_URL"
-  echo "         The kit ships pre-wired to https://mcp.relevanceai.com (Relevance AI prod)."
-  echo "         If this was intentional, ignore. Otherwise restore: git checkout .mcp.json"
+# ── Colors ──────────────────────────────────────────────
+if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+  BOLD=$'\033[1m'
+  DIM=$'\033[2m'
+  RED=$'\033[38;5;196m'
+  GREEN=$'\033[38;5;82m'
+  YELLOW=$'\033[38;5;226m'
+  BLUE=$'\033[38;5;75m'
+  ORANGE=$'\033[38;5;214m'
+  PURPLE=$'\033[38;5;141m'
+  RESET=$'\033[0m'
 else
-  echo "  MCP target: $MCP_URL"
+  BOLD=""; DIM=""; RED=""; GREEN=""; YELLOW=""; BLUE=""; ORANGE=""; PURPLE=""; RESET=""
 fi
-echo ""
 
-# --- 3. Project naming ---
+# ── UI helpers ──────────────────────────────────────────
+header() {
+  local step="$1"; local title="$2"
+  echo
+  echo "${BOLD}${ORANGE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
+  echo "${BOLD}${ORANGE}  Step ${step}/${TOTAL_STEPS}  ${RESET}${BOLD}${title}${RESET}"
+  echo "${BOLD}${ORANGE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
+  echo
+}
+ok()    { echo "  ${GREEN}✓${RESET} $1"; }
+warn()  { echo "  ${YELLOW}⚠${RESET} $1"; }
+fail()  { echo "  ${RED}✗${RESET} $1"; }
+info()  { echo "  ${BLUE}ℹ${RESET} $1"; }
+ask()   { printf "  ${BOLD}>${RESET} %s" "$1"; }
 
-echo "Choose a name for your project."
-echo "This will:"
-echo "  - Rename this folder to relevance-builder-{name}"
-echo "  - Set the MCP server name to relevance-ai-{name}"
-echo ""
-echo "Examples: personal, team, marketing"
-echo ""
-read -rp "Project name: " PROJECT_NAME
+trap 'echo; fail "Setup interrupted. Re-run when ready."; exit 130' INT
 
-PROJECT_NAME_CLEAN=$(echo "$PROJECT_NAME" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd 'a-z0-9-')
+# ── Banner ──────────────────────────────────────────────
+echo
+echo "${BOLD}${PURPLE}╔═══════════════════════════════════════════════════════════╗${RESET}"
+echo "${BOLD}${PURPLE}║       Relevance Builder Kit -- First-Time Setup           ║${RESET}"
+echo "${BOLD}${PURPLE}╚═══════════════════════════════════════════════════════════╝${RESET}"
+echo
+echo "  Wires this clone to one Relevance AI project."
+echo "  ${DIM}Idempotent. Re-run any time.${RESET}"
+echo
+echo "  ${DIM}Working in: $REPO_DIR${RESET}"
 
-if [ -z "$PROJECT_NAME_CLEAN" ]; then
-  echo "ERROR: Invalid project name."
+# ── Step 1: Prerequisites ───────────────────────────────
+header 1 "Prerequisites"
+
+MISSING=0
+
+if command -v python3 >/dev/null 2>&1; then
+  PY=$(python3 --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+  ok "python3       ${DIM}$PY${RESET}"
+else
+  fail "python3 not found"
+  info "Install: brew install python  (macOS) or apt install python3  (Linux)"
+  MISSING=1
+fi
+
+if command -v git >/dev/null 2>&1; then
+  GIT_V=$(git --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+  ok "git           ${DIM}$GIT_V${RESET}"
+else
+  fail "git not found"
+  MISSING=1
+fi
+
+if command -v claude >/dev/null 2>&1; then
+  CC=$(claude --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+  if [ -n "$CC" ]; then
+    ok "claude CLI    ${DIM}$CC${RESET}"
+  else
+    ok "claude CLI    ${DIM}(version unknown)${RESET}"
+  fi
+else
+  fail "claude CLI not found"
+  info "Install from claude.com/claude-code"
+  MISSING=1
+fi
+
+if [ "$MISSING" = "1" ]; then
+  echo
+  fail "Missing prerequisites. Install them and re-run setup."
   exit 1
 fi
 
-MCP_SERVER_NAME="relevance-ai-${PROJECT_NAME_CLEAN}"
-TARGET_DIR_NAME="relevance-builder-${PROJECT_NAME_CLEAN}"
-CURRENT_DIR_NAME="$(basename "$REPO_DIR")"
-PARENT_DIR="$(dirname "$REPO_DIR")"
+# ── Step 2: MCP Config ──────────────────────────────────
+header 2 "MCP configuration"
 
-if [ "$CURRENT_DIR_NAME" != "$TARGET_DIR_NAME" ]; then
-  TARGET_PATH="$PARENT_DIR/$TARGET_DIR_NAME"
+MCP_JSON="$REPO_DIR/.mcp.json"
 
-  if [ -d "$TARGET_PATH" ]; then
-    echo "ERROR: $TARGET_PATH already exists. Pick a different name or remove the existing folder."
+if [ ! -f "$MCP_JSON" ]; then
+  warn ".mcp.json missing"
+  if git -C "$REPO_DIR" rev-parse --git-dir >/dev/null 2>&1; then
+    info "Restoring from git..."
+    git -C "$REPO_DIR" checkout .mcp.json
+    ok ".mcp.json restored"
+  else
+    fail "Not a git repo and no .mcp.json. Re-clone the kit."
     exit 1
   fi
-
-  echo "Renaming folder: $CURRENT_DIR_NAME -> $TARGET_DIR_NAME"
-  echo ""
-  echo "WARNING: about to rename this directory."
-  echo "         If any other terminal has it open as CWD, that shell will be orphaned"
-  echo "         (commands there will fail with 'No such file or directory')."
-  echo "         Close those terminals before continuing."
-  echo ""
-  read -rp "Continue with rename? (y/n): " CONFIRM_RENAME
-  if [[ ! "$CONFIRM_RENAME" =~ ^[Yy]$ ]]; then
-    echo "Rename cancelled. Re-run setup.sh when ready."
-    exit 0
-  fi
-  mv "$REPO_DIR" "$TARGET_PATH"
-  REPO_DIR="$TARGET_PATH"
-  SCRIPTS_DIR="$REPO_DIR/scripts"
-  echo "  Done. Kit is now at: $REPO_DIR"
-else
-  echo "  Folder already named $TARGET_DIR_NAME, skipping rename."
 fi
 
-echo ""
+if ! python3 -c "import json; json.load(open('$MCP_JSON'))" 2>/dev/null; then
+  fail ".mcp.json has invalid JSON"
+  exit 1
+fi
 
-# --- 4. Customize .mcp.json ---
+if ! grep -q "mcp.relevanceai.com" "$MCP_JSON"; then
+  warn ".mcp.json does not point to mcp.relevanceai.com"
+  ask "Restore default? [Y/n]: "
+  read -r ANS
+  if [ -z "$ANS" ] || [ "$ANS" = "y" ] || [ "$ANS" = "Y" ]; then
+    git -C "$REPO_DIR" checkout .mcp.json
+    ok "Restored from git"
+  fi
+fi
 
-MCP_JSON="$REPO_DIR/.mcp.json"
-
-echo "Customizing .mcp.json with server name: $MCP_SERVER_NAME"
-
-python3 -c "
+CURRENT_SERVER=$(python3 -c "
 import json
-import sys
+d = json.load(open('$MCP_JSON'))
+keys = list(d.get('mcpServers', {}).keys())
+print(keys[0] if keys else '')
+")
 
-with open('$MCP_JSON') as f:
-    data = json.load(f)
+ok ".mcp.json valid"
+info "Server name:     ${BOLD}${CURRENT_SERVER:-<none>}${RESET}"
+info "URL:             ${BOLD}https://mcp.relevanceai.com${RESET}"
 
-servers = data.get('mcpServers', {})
-if not servers:
-    print('ERROR: .mcp.json has no mcpServers entries. The file looks corrupted.', file=sys.stderr)
-    print('       Restore it from the original kit or run: git checkout .mcp.json', file=sys.stderr)
-    sys.exit(1)
+# ── Step 3: Folder & Server Suffix ──────────────────────
+header 3 "Folder & MCP server suffix"
 
-old_key = next(iter(servers))
-server_config = servers[old_key]
+cat <<EOF
+  Pick a suffix that ${BOLD}matches the Relevance AI project${RESET} this clone
+  will build agents in. One clone = one Relevance project, so the
+  match keeps it obvious which folder belongs to which project, and
+  prevents multiple clones from colliding.
 
-new_data = {'mcpServers': {'$MCP_SERVER_NAME': server_config}}
-with open('$MCP_JSON', 'w') as f:
-    json.dump(new_data, f, indent=2)
-    f.write('\n')
-"
-echo "  .mcp.json updated."
-echo ""
+  Folder:       ${BOLD}relevance-builder-kit-{suffix}${RESET}
+  MCP server:   ${BOLD}relevance-ai-kit-{suffix}${RESET}
 
-# --- 5. Configure statusline ---
+  Use the project name lowercased and hyphenated.
+  ${DIM}e.g. \"Lead Research\" -> lead-research, \"ACME Prod\" -> acme-prod${RESET}
 
-if [ -f "$SCRIPTS_DIR/setup-statusline.sh" ]; then
-  echo "Configuring statusline..."
-  bash "$SCRIPTS_DIR/setup-statusline.sh"
+EOF
+
+CURRENT_FOLDER=$(basename "$REPO_DIR")
+PARENT_DIR=$(dirname "$REPO_DIR")
+CURRENT_SUFFIX=""
+if [[ "$CURRENT_FOLDER" =~ ^relevance-builder-kit-(.+)$ ]]; then
+  CURRENT_SUFFIX="${BASH_REMATCH[1]}"
+  info "Current folder: ${BOLD}$CURRENT_FOLDER${RESET}"
+  info "Current suffix: ${BOLD}$CURRENT_SUFFIX${RESET}"
+  ask "Press Enter to keep '${BOLD}$CURRENT_SUFFIX${RESET}' or type a new suffix: "
+elif [ "$CURRENT_FOLDER" = "relevance-builder-kit" ]; then
+  info "Current folder: ${BOLD}$CURRENT_FOLDER${RESET} (no suffix yet)"
+  ask "Choose a suffix: "
+else
+  warn "Folder '$CURRENT_FOLDER' does not match the kit naming convention"
+  ask "Suffix to rename to 'relevance-builder-kit-{suffix}' (or type 'skip'): "
 fi
 
-# --- 6. Offer ccd shell alias ---
+read -r SUFFIX_INPUT
 
-echo ""
-echo "Optional: 'ccd' shortcut for 'claude --dangerously-skip-permissions'."
-echo "  This flag bypasses Claude Code's per-tool permission prompts."
-echo "  It is faster, but Claude can run shell commands and edit files without asking."
-echo "  Only enable if you understand and accept that tradeoff."
-echo ""
-read -rp "Add 'ccd' shell alias? (y/n): " ADD_ALIAS
+# Sanitize: strip leading hyphens, lowercase, replace invalid chars with hyphen
+SUFFIX=$(echo "$SUFFIX_INPUT" | tr '[:upper:]' '[:lower:]' | sed 's/^-*//' | sed 's/[^a-z0-9-]/-/g')
 
-if [[ "$ADD_ALIAS" =~ ^[Yy]$ ]]; then
-  USER_SHELL="$(basename "${SHELL:-}")"
+if [ -z "$SUFFIX_INPUT" ] && [ -n "$CURRENT_SUFFIX" ]; then
+  SUFFIX="$CURRENT_SUFFIX"
+  ok "Keeping suffix: ${BOLD}$SUFFIX${RESET}"
+elif [ "$SUFFIX_INPUT" = "skip" ]; then
+  warn "Skipping rename. Hooks may not fire until the server is renamed."
+  SUFFIX=""
+elif [ -z "$SUFFIX" ]; then
+  fail "Suffix cannot be empty"
+  exit 1
+elif [ "$SUFFIX" != "$SUFFIX_INPUT" ]; then
+  ok "Sanitized: ${DIM}$SUFFIX_INPUT${RESET} -> ${BOLD}$SUFFIX${RESET}"
+else
+  ok "Suffix: ${BOLD}$SUFFIX${RESET}"
+fi
 
-  case "$USER_SHELL" in
-    fish)
-      SHELL_RC="$HOME/.config/fish/config.fish"
-      ALIAS_LINE='alias ccd "claude --dangerously-skip-permissions"'
-      mkdir -p "$(dirname "$SHELL_RC")"
-      ;;
-    zsh)
-      SHELL_RC="$HOME/.zshrc"
-      ALIAS_LINE='alias ccd="claude --dangerously-skip-permissions"'
-      ;;
-    bash)
-      SHELL_RC="$HOME/.bashrc"
-      ALIAS_LINE='alias ccd="claude --dangerously-skip-permissions"'
-      ;;
-    *)
-      # Fall back: pick whichever rc file exists, default to zshrc on macOS.
-      if [ -f "$HOME/.zshrc" ]; then
-        SHELL_RC="$HOME/.zshrc"
-      elif [ -f "$HOME/.bashrc" ]; then
-        SHELL_RC="$HOME/.bashrc"
-      else
-        SHELL_RC="$HOME/.zshrc"
-      fi
-      ALIAS_LINE='alias ccd="claude --dangerously-skip-permissions"'
-      echo "  Could not detect shell ($USER_SHELL); defaulting to $SHELL_RC."
-      echo "  If your shell uses different syntax, add this manually instead:"
-      echo "    $ALIAS_LINE"
-      ;;
-  esac
-
-  # Anchored grep so a comment containing 'alias ccd=' doesn't false-positive.
-  if grep -qE '^\s*alias\s+ccd[= ]' "$SHELL_RC" 2>/dev/null; then
-    echo "  ccd alias already exists in $SHELL_RC"
+# Rename folder if needed
+if [ -n "$SUFFIX" ]; then
+  TARGET_FOLDER="relevance-builder-kit-$SUFFIX"
+  if [ "$CURRENT_FOLDER" != "$TARGET_FOLDER" ]; then
+    NEW_PATH="$PARENT_DIR/$TARGET_FOLDER"
+    if [ -e "$NEW_PATH" ]; then
+      fail "Cannot rename: $NEW_PATH already exists"
+      info "Either pick a different suffix or remove the existing folder."
+      exit 1
+    fi
+    info "Renaming: ${DIM}$CURRENT_FOLDER${RESET} -> ${ORANGE}$TARGET_FOLDER${RESET}"
+    mv "$REPO_DIR" "$NEW_PATH"
+    REPO_DIR="$NEW_PATH"
+    MCP_JSON="$REPO_DIR/.mcp.json"
+    cd "$REPO_DIR"
+    ok "Folder renamed"
+    warn "After this script exits, ${BOLD}cd $REPO_DIR${RESET} (your shell is still in the old path)"
   else
-    echo "" >> "$SHELL_RC"
-    echo "# Claude Code shortcut (skip permissions)" >> "$SHELL_RC"
-    echo "$ALIAS_LINE" >> "$SHELL_RC"
-    echo "  Added ccd alias to $SHELL_RC (restart your shell or run: source $SHELL_RC)"
+    ok "Folder already named ${BOLD}$TARGET_FOLDER${RESET}"
+  fi
+
+  # Update MCP server name
+  TARGET_SERVER="relevance-ai-kit-$SUFFIX"
+  if [ "$CURRENT_SERVER" != "$TARGET_SERVER" ]; then
+    info "Renaming MCP server: ${DIM}$CURRENT_SERVER${RESET} -> ${ORANGE}$TARGET_SERVER${RESET}"
+    python3 - <<PYEOF
+import json
+with open("$MCP_JSON") as f:
+    d = json.load(f)
+servers = d.get("mcpServers", {})
+new_servers = {}
+for k, v in servers.items():
+    if k == "$CURRENT_SERVER":
+        new_servers["$TARGET_SERVER"] = v
+    else:
+        new_servers[k] = v
+d["mcpServers"] = new_servers
+with open("$MCP_JSON", "w") as f:
+    json.dump(d, f, indent=2)
+    f.write("\n")
+PYEOF
+    ok "Server name updated in .mcp.json"
+  else
+    ok "MCP server already named ${BOLD}$TARGET_SERVER${RESET}"
   fi
 fi
 
-# --- 7. Create first build folder ---
+# ── Step 4: Statusline ──────────────────────────────────
+header 4 "Statusline configuration"
 
-echo ""
-read -rp "Create your first build folder in builds/? (y/n): " CREATE_BUILD
+PROJECT_DISPLAY="${SUFFIX:+relevance-builder-kit-$SUFFIX}"
+[ -z "$PROJECT_DISPLAY" ] && PROJECT_DISPLAY="$(basename "$REPO_DIR")"
 
-if [[ "$CREATE_BUILD" =~ ^[Yy]$ ]]; then
-  read -rp "Build name (e.g. 'lead-research', 'phone-receptionist'): " BUILD_NAME
-  BUILD_DIR_NAME=$(echo "$BUILD_NAME" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd 'a-z0-9-')
+cat <<EOF
+  Default (always on):
 
-  if [ -n "$BUILD_DIR_NAME" ]; then
-    BUILD_DIR="$REPO_DIR/builds/$BUILD_DIR_NAME"
-    mkdir -p "$BUILD_DIR/tools"
+    ${ORANGE}⚡ $PROJECT_DISPLAY${RESET} ${BLUE}🌿 main${RESET} ${PURPLE}🤖 Opus 4.7${RESET}
 
-    if [ ! -f "$BUILD_DIR/agent.md" ]; then
-      cat > "$BUILD_DIR/agent.md" << 'AGENTEOF'
-# Agent Name
+  Optional sections you can toggle:
 
-## Agent Config
+    1. Vim mode               ${DIM}✎ INSERT${RESET}
+    2. Context window bar     ${DIM}🧠 ████░░░░░░ 42% (420k/1000k tok)${RESET}
+    3. Cost                   ${DIM}💰 \$0.123${RESET}
+    4. Duration               ${DIM}⏱ 1m15s${RESET}
+    5. Lines changed          ${DIM}+12 -3${RESET}
+    6. Output tokens          ${DIM}✍ 12k${RESET}
+    7. Cache hits             ${DIM}⚡cache 50k${RESET}
+    8. Rate limits (Pro/Max)  ${DIM}5h: ████░░ 42% ↺2h15m${RESET}
 
-| Field | Value |
-|-------|-------|
-| Agent ID | |
-| Project | |
-| Region | |
-| Model | |
-| Temperature | |
-| Autonomy | |
+EOF
+
+show_vim=false
+show_context=false
+show_cost=false
+show_duration=false
+show_lines=false
+show_output_tokens=false
+show_cache=false
+show_rate_limits=false
+
+ask "Pick mode: [a]ll on, [n]one (minimal default), or [c]ustomise one by one? [a/n/c]: "
+read -r MODE
+
+case "$MODE" in
+  a|A|all)
+    show_vim=true
+    show_context=true
+    show_cost=true
+    show_duration=true
+    show_lines=true
+    show_output_tokens=true
+    show_cache=true
+    show_rate_limits=true
+    ok "All sections on"
+    ;;
+  n|N|none|"")
+    ok "Minimal default (project + branch + model only)"
+    ;;
+  c|C|custom|customise|customize|*)
+    ask_toggle() {
+      local var="$1" label="$2" example="$3"
+      echo
+      echo "    ${BOLD}$label${RESET}  ${DIM}$example${RESET}"
+      printf "    ${BOLD}>${RESET} Show? [y/N]: "
+      read -r a
+      case "$a" in y|Y|yes) eval "$var=true" ;; *) eval "$var=false" ;; esac
+    }
+    ask_toggle show_vim           "Vim mode"             "✎ INSERT"
+    ask_toggle show_context       "Context window bar"   "🧠 ████░░░░░░ 42% (420k/1000k tok)"
+    ask_toggle show_cost          "Cost"                 "💰 \$0.123"
+    ask_toggle show_duration      "Duration"             "⏱ 1m15s"
+    ask_toggle show_lines         "Lines changed"        "+12 -3"
+    ask_toggle show_output_tokens "Output tokens"        "✍ 12k"
+    ask_toggle show_cache         "Cache hits"           "⚡cache 50k"
+    ask_toggle show_rate_limits   "Rate limits"          "5h: ████░░ 42% ↺2h15m"
+    echo
+    ;;
+esac
+
+cat > "$REPO_DIR/.claude/statusline.conf" <<CONF
+show_project=true
+show_branch=true
+show_vim=$show_vim
+show_model=true
+show_context=$show_context
+show_cost=$show_cost
+show_duration=$show_duration
+show_lines=$show_lines
+show_output_tokens=$show_output_tokens
+show_cache=$show_cache
+show_rate_limits=$show_rate_limits
+CONF
+
+ok "Wrote .claude/statusline.conf"
+info "Restart Claude Code (or wait for the next refresh) to see changes."
+
+# ── Step 5: ccd alias ───────────────────────────────────
+header 5 "Optional: 'ccd' shell alias"
+
+cat <<EOF
+  ${BOLD}ccd${RESET} = ${DIM}claude --dangerously-skip-permissions${RESET}
+
+  Skips permission prompts on every tool call. Faster, but Claude
+  can run shell commands and edit files without asking. Only enable
+  if you accept that tradeoff.
+
+EOF
+
+SHELL_RC=""
+case "$(basename "${SHELL:-}")" in
+  zsh)  SHELL_RC="$HOME/.zshrc"  ;;
+  bash) SHELL_RC="$HOME/.bashrc" ;;
+  *)
+    [ -f "$HOME/.zshrc"  ] && SHELL_RC="$HOME/.zshrc"
+    [ -z "$SHELL_RC" ] && [ -f "$HOME/.bashrc" ] && SHELL_RC="$HOME/.bashrc"
+    ;;
+esac
+
+if [ -n "$SHELL_RC" ] && grep -q '^alias ccd=' "$SHELL_RC" 2>/dev/null; then
+  ok "ccd alias already set in $SHELL_RC"
+else
+  ask "Add 'ccd' alias to ${SHELL_RC:-shell config}? [y/N]: "
+  read -r ANS
+  if [ "$ANS" = "y" ] || [ "$ANS" = "Y" ] || [ "$ANS" = "yes" ]; then
+    if [ -z "$SHELL_RC" ]; then
+      warn "Could not detect shell config (~/.zshrc or ~/.bashrc). Skipping."
+    else
+      {
+        echo ""
+        echo "# Claude Code shortcut (skip permissions)"
+        echo 'alias ccd="claude --dangerously-skip-permissions"'
+      } >> "$SHELL_RC"
+      ok "Added to $SHELL_RC"
+      info "Reload your shell: ${BOLD}source $SHELL_RC${RESET}"
+    fi
+  else
+    info "Skipped"
+  fi
+fi
+
+# ── Step 6: First Build Folder ──────────────────────────
+header 6 "Optional: scaffold your first build folder"
+
+cat <<EOF
+  Each agent build lives under ${BOLD}builds/{name}/${RESET} with an
+  agent.md (build journal) and system-prompt.md (deployable prompt).
+
+  ${DIM}Already see builds/example/ for a worked reference build.${RESET}
+
+EOF
+
+ask "Create a new build folder now? [y/N]: "
+read -r ANS
+
+if [ "$ANS" = "y" ] || [ "$ANS" = "Y" ] || [ "$ANS" = "yes" ]; then
+  ask "Build name (e.g. lead-research, phone-receptionist): "
+  read -r BUILD_NAME
+  BUILD_NAME=$(echo "$BUILD_NAME" | tr '[:upper:] ' '[:lower:]-' | sed 's/[^a-z0-9-]//g')
+  if [ -z "$BUILD_NAME" ]; then
+    warn "Empty name, skipping"
+  elif [ -d "$REPO_DIR/builds/$BUILD_NAME" ]; then
+    warn "builds/$BUILD_NAME already exists, skipping"
+  else
+    mkdir -p "$REPO_DIR/builds/$BUILD_NAME/tools"
+    cat > "$REPO_DIR/builds/$BUILD_NAME/agent.md" <<MD
+# $BUILD_NAME
+
+## Identity
+
+- **Agent ID:**
+- **Name:**
+- **Model:**
+- **Temperature:**
+- **Autonomy:**
+- **Owner:**
+
+## Purpose
+
+(One paragraph: what this agent does, who uses it, when.)
 
 ## Tools
 
 | Tool | Studio ID | Action ID | Purpose |
 |------|-----------|-----------|---------|
-| | | | |
+|      |           |           |         |
 
-## Knowledge Tables
+## Knowledge tables
 
-| Table | Purpose |
-|-------|---------|
-| | |
+(Tables this agent reads from / writes to.)
 
-## Key Design Decisions
+## Workforce context (if applicable)
 
--
+- **Workforce ID:**
+- **Node ID:**
+- **Edge type:**
 
-## Workflow Summary
+## Design decisions
 
-1.
-AGENTEOF
-      echo "  Created builds/$BUILD_DIR_NAME/agent.md"
-    else
-      echo "  builds/$BUILD_DIR_NAME/agent.md already exists"
-    fi
+(Why-not-what notes that future-you will need.)
 
-    if [ ! -f "$BUILD_DIR/system-prompt.md" ]; then
-      cat > "$BUILD_DIR/system-prompt.md" << 'PROMPTEOF'
-# System Prompt
+## Workflow summary
 
-Notes (preamble, not deployed):
+(High-level numbered list.)
 
-- Edit only the body between BEGIN PROMPT / END PROMPT markers.
-- No markdown tables in the body. The pre-tool hook blocks deploys that contain them.
-- No em or en dashes. Use commas, full stops, parentheses, or `--`.
-- Tool references: bare `{{_actions.<id>}}` pills only. No backticks, no bold around them.
+## System prompt
 
----
+See [system-prompt.md](./system-prompt.md).
 
-BEGIN PROMPT
+## Test plan
+
+Auto-generate via \`/eval\` after first deploy.
+MD
+    cat > "$REPO_DIR/builds/$BUILD_NAME/system-prompt.md" <<'MD'
+<!-- BEGIN PROMPT -->
 
 # Identity
 
-You are a [role] for [purpose]. You operate on ONE [entity] per task.
+You are ...
 
 # Scope
 
-You answer [scope]. You decline anything else.
+You handle ...
+You decline anything outside scope.
 
 # Rules
 
-- [rule]
-- [rule]
+- ...
 
-# Your Tools
+# Your tools
 
-{{_actions.<id>}}
+(Insert {{_actions.ID}} pills here once tools are attached.)
 
 # Workflow
 
-1. [step]
-2. [step]
+1. ...
 
-# Output Format
+# Output
 
-[describe the output shape]
+...
 
-END PROMPT
-PROMPTEOF
-      echo "  Created builds/$BUILD_DIR_NAME/system-prompt.md"
-    else
-      echo "  builds/$BUILD_DIR_NAME/system-prompt.md already exists"
-    fi
+<!-- END PROMPT -->
+MD
+    ok "Scaffolded ${BOLD}builds/$BUILD_NAME/${RESET}"
+    info "Files: agent.md, system-prompt.md, tools/"
   fi
+else
+  info "Skipped"
 fi
 
-# --- 8. Run verification ---
+# ── Step 7: Verification ────────────────────────────────
+header 7 "Verification"
 
-echo ""
-echo "Running verification..."
-if [ -f "$SCRIPTS_DIR/verify-setup.sh" ]; then
-  bash "$SCRIPTS_DIR/verify-setup.sh"
+if [ -f "$REPO_DIR/scripts/verify-setup.sh" ]; then
+  bash "$REPO_DIR/scripts/verify-setup.sh" || true
+else
+  warn "scripts/verify-setup.sh missing"
 fi
 
-# --- 9. Next steps ---
-
-echo ""
-echo "========================================="
-echo "  Setup complete."
-echo "========================================="
-echo ""
-echo "Your project: $PROJECT_NAME_CLEAN"
-echo "Kit folder:   $(basename "$REPO_DIR")"
-echo "MCP server:   $MCP_SERVER_NAME"
-echo "MCP target:   https://mcp.relevanceai.com (Relevance AI prod, OAuth)"
-echo ""
-echo "========================================="
-echo "  AUTHENTICATE MCP"
-echo "========================================="
-echo ""
-echo "To connect to Relevance AI, open Claude Code and run:"
-echo ""
-echo "  /mcp"
-echo ""
-echo "This will trigger OAuth login in your browser against mcp.relevanceai.com."
-echo "Log in with your Relevance AI account and select your project."
-echo ""
-echo "-----------------------------------------"
-echo ""
-echo "Next steps:"
-echo "  1. cd $REPO_DIR"
-echo "  2. Start Claude Code:  claude"
-echo "  3. Run /mcp to authenticate"
-echo "  4. Read the onboarding guide:  docs/getting-started.md"
-echo ""
-echo "Quick reference:  docs/advanced-usage.md"
-echo ""
+# ── Final ───────────────────────────────────────────────
+echo
+echo "${BOLD}${GREEN}╔═══════════════════════════════════════════════════════════╗${RESET}"
+echo "${BOLD}${GREEN}║                    Setup Complete                         ║${RESET}"
+echo "${BOLD}${GREEN}╚═══════════════════════════════════════════════════════════╝${RESET}"
+echo
+echo "  ${BOLD}One more step: authenticate with Relevance AI.${RESET}"
+echo
+echo "  ${BOLD}1.${RESET} Start Claude Code from this folder:"
+echo "       ${ORANGE}cd \"$REPO_DIR\"${RESET}"
+echo "       ${ORANGE}claude${RESET}"
+echo
+echo "  ${BOLD}2.${RESET} Inside Claude Code, run:"
+echo "       ${ORANGE}/mcp${RESET}"
+echo
+echo "  Your browser opens for OAuth login. Pick the project that"
+echo "  matches the folder suffix and authorize. Done."
+echo
+echo "  ${BOLD}Then start building. Useful skills:${RESET}"
+echo "       ${BLUE}/agent-build-patterns${RESET}   ${DIM}-- design philosophy and patterns${RESET}"
+echo "       ${BLUE}/template-agent${RESET}         ${DIM}-- starter agent design rubric${RESET}"
+echo "       ${BLUE}/eval${RESET}                   ${DIM}-- generate and run platform evals${RESET}"
+echo
