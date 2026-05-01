@@ -34,10 +34,12 @@ Two independent decisions per edge:
 
 ## Edge Types
 
-| Edge type         | Who decides when it fires       | Use for                                              |
-|-------------------|--------------------------------|------------------------------------------------------|
-| `forced-handover` | Platform (deterministic)       | Sequential pipelines, trigger → agent, condition outcomes |
-| `tool-call`       | Source agent (LLM decides)     | Optional / conditional invocation by the LLM         |
+| API name           | UI name        | Who decides when it fires       | Use for                                              |
+|--------------------|----------------|---------------------------------|------------------------------------------------------|
+| `forced-handover` | "Next Step"    | Platform (deterministic)        | Sequential pipelines, trigger → agent, condition outcomes |
+| `tool-call`       | "AI Connection"| Source agent (LLM decides)      | Optional / conditional invocation by the LLM         |
+
+The UI names are what builders see in the visual canvas; the API names are what you'll see in `relevance_get_workforce` output and what's referenced throughout this kit. They're the same thing.
 
 **`forced-handover`** runs the target as soon as the source finishes. No LLM decision involved. The flow is fixed in the graph.
 
