@@ -116,7 +116,8 @@ Invoke skills with slash commands:
 - `/eval` -- generate and run platform evals
 - `/agent-optimiser` -- analyze an agent or workforce for config, prompt, and credit issues
 - `/document-workforce` -- document a workforce and all its agents
-- `/generate-diagram` -- generate a FigJam architecture diagram
+- `/improve` -- capture a single mid-flow insight as a well-scoped PR
+- `/capture-learning` -- end-of-session retro: extract reusable learnings, update knowledge base or PR
 - `/setup` -- first-time kit setup walkthrough
 
 Skills load into the conversation context, so Claude follows those patterns for the rest of the session.

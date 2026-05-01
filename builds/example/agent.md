@@ -45,12 +45,6 @@ None. This agent reads from Google search, not from a knowledge table.
 5. If two or more company URLs surface, emit the first plus a note ("multiple candidates: <list>") with `confidence: medium`.
 6. If no company URLs surface, emit empty URL with `confidence: low`.
 
-## Workflow Diagram
-
-Generate via `/generate-diagram` once the agent is deployed. URL: `<add FigJam link>`. Last updated: `<YYYY-MM-DD>`.
-
-For a simple single-tool agent like this, a diagram is optional. It becomes load-bearing once you add a workforce.
-
 ## Test Plan
 
 Auto-generate via `/eval` after first deploy. Minimum coverage:

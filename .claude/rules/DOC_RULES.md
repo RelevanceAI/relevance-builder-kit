@@ -147,7 +147,6 @@ Must include:
 - Knowledge tables read from and written to
 - Key design decisions and workflow summary
 - Pointer to where the system prompt lives (typically `./system-prompt.md`)
-- **Workflow Diagram** section with FigJam URL and last-updated date (generate via `/generate-diagram`)
 
 ### system-prompt.md and other deployable prompt files
 
@@ -214,7 +213,6 @@ Must include:
 - Data flow diagram
 - Knowledge tables
 - Standalone agents that interact with the workforce but aren't in the graph
-- **Workflow Diagram** section with FigJam URL and last-updated date (generate via `/generate-diagram`)
 
 ---
 
@@ -249,7 +247,6 @@ Must include:
 | Workforce modified | Update workforce doc |
 | New knowledge table | Add to agent.md |
 | Design decision made | Add to design decisions section |
-| Agent / workforce restructured | Generate / update FigJam diagram via `/generate-diagram`, update `## Workflow Diagram` section |
 
 ### When to Update Reference Knowledge
 

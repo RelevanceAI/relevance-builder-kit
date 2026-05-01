@@ -91,8 +91,9 @@ A few examples of how auto-invocation feels in practice:
 | "Audit this agent for credit and prompt issues" | `/agent-optimiser` |
 | "Set up tests for this agent before going live" | `/eval` |
 | "Build me a starter agent for lead research" | `/template-agent` |
-| "Generate a diagram of this workforce" | `/generate-diagram` |
 | "Document this workforce and all its agents" | `/document-workforce` |
+| "Capture this learning into the kit" | `/improve` |
+| "Let's do a retro on this build" | `/capture-learning` |
 
 Curated highlights:
 
@@ -102,8 +103,9 @@ Curated highlights:
 | `/eval` | Auto-generate test cases, run platform evals, golden sets, gate criteria, and performance monitoring |
 | `/agent-optimiser` | Audit any agent or workforce for config, prompt, tool, and credit issues. Returns ranked optimizations |
 | `/template-agent` | Design and build a starter agent: 12-point design rubric, layered architecture, build-fresh principles |
-| `/generate-diagram` | Generate a FigJam architecture diagram from any agent or workforce URL |
 | `/document-workforce` | Document a workforce and all its agents from the platform into local markdown |
+| `/improve` | Capture a single mid-flow insight as a well-scoped PR. Substance-strict bar, refuses ~half its invocations |
+| `/capture-learning` | End-of-session retro: extract reusable learnings, update knowledge base or open a PR |
 | `/setup` | First-time setup, conversational. Same flow as `setup.sh` but inside Claude Code |
 
 There are more skills in `.claude/skills/`. Browse them, and **add your own** when you spot a workflow worth automating: see [Contributing](#contributing) below.

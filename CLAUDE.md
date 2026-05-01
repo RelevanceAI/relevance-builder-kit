@@ -52,10 +52,11 @@ Routing for the most common workflows. Each domain owns specific concerns.
 |------|-------|
 | Design patterns | `/agent-build-patterns` skill |
 | Run platform evals | `/eval` skill |
-| Generate workforce diagrams | `/generate-diagram` skill |
 | Document a workforce | `/document-workforce` skill |
 | Optimise an existing agent | `/agent-optimiser` skill |
 | Build a starter agent | `/template-agent` skill |
+| Capture a mid-flow insight as a PR | `/improve` skill |
+| End-of-session retro and learnings | `/capture-learning` skill |
 | First-time setup | `/setup` skill |
 | Platform API and state mapping | `.claude/rules/PLATFORM_MECHANICS.md` |
 | Tool transformations | `build-kit/tools/` |
