@@ -63,7 +63,7 @@ Bar check for: <candidate description>
 
 If ANY gate is FAIL: stop. Output a clean refusal naming which gate(s) failed, why, and where the user should go instead. Example refusals:
 
-- Gate 3 fail: "No clear primary home -- this could plausibly go in `BUILD_PRACTICES.md`, `PLATFORM_MECHANICS.md`, or `build-kit/tools/state-mapping.md` with no obvious primary. That suggests a larger structural change (a doc reorg or new section). Run `/capture-learning` for a deeper dive."
+- Gate 3 fail: "No clear primary home -- this could plausibly go in `BUILD_PRACTICES.md`, `PLATFORM_MECHANICS.md`, or `build-kit/agents/tools/state-mapping.md` with no obvious primary. That suggests a larger structural change (a doc reorg or new section). Run `/capture-learning` for a deeper dive."
 - Gate 4 fail: "Restates what the section heading already implies. Adds nothing concrete -- no specific failure mode, no workflow step, no behaviour clarification. Skip or rephrase to anchor on a specific gotcha."
 - Gate 5 contradiction fail: "Contradicts `<file>:<section>` which says `<X>` while the new insight says `<not X>`. Resolve in a separate PR before adding this."
 - Gate 6 fail: "Build-specific (mentions `<build-name>` or relies on `<environment-detail>`). Belongs in `builds/<build-name>/agent.md`, not the shared knowledge base."

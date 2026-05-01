@@ -39,4 +39,4 @@ Come here when:
 
 - `playbooks/CLAUDE.md` -- knowledge hub
 - `.claude/skills/agent-build-patterns/` -- design philosophy behind these patterns
-- `build-kit/phone-agents.md` -- deep phone agent reference
+- `build-kit/agents/phone/phone-agents.md` -- deep phone agent reference

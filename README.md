@@ -136,7 +136,7 @@ builds/                 # Your own build docs (one folder per build)
 .claude/
   rules/                # Governance + platform mechanics (auto-loaded)
   skills/               # Slash-command skills
-build-kit/              # Deep reference (tools, integrations, patterns, templates)
+build-kit/              # Deep reference (agents, workforces, evals, integrations, patterns, templates)
 playbooks/              # Use-case architecture playbooks
 ```
 
@@ -185,8 +185,11 @@ If a learning is specific to your environment, team, or one build -- credentials
 | Reusable workflow worth automating | A new skill in `.claude/skills/` |
 | Use-case architecture playbook (e.g. phone agent for X) | `playbooks/use-cases/` |
 | Integration-specific gotcha (HubSpot, Salesforce, Slack, etc.) | `build-kit/integrations/` |
-| Tool transformation or platform reference | `build-kit/tools/` |
-| Reusable architecture pattern | `build-kit/patterns/` |
+| Tool transformation, sandbox auth, state-mapping, voice, AI Browser | `build-kit/agents/tools/` |
+| Knowledge table API + knowledge architecture (CRM, locale) | `build-kit/agents/knowledge/` |
+| System prompt design, agent variables, placeholder tools | `build-kit/agents/prompt/` |
+| Workforce / multi-agent orchestration patterns | `build-kit/workforces/` |
+| Documentation patterns + cross-cutting troubleshooting | `build-kit/patterns/` |
 
 When in doubt, scope smaller and ask in the PR if you're unsure where it lands.
 

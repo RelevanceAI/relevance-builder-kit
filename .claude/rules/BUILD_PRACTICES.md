@@ -35,11 +35,11 @@ Enforced at deploy time by `scripts/pre-tool-system-prompt-check.sh` (PreToolUse
 
 ### Placeholder Tools
 
-`{{_placeholder.TOOL <name>}}` reserves a slot. Use for template / starter agents to telegraph future capabilities. Avoid for marketplace publishing (validation blocks) or production SLAs (mock echo). Companion skill: `/template-agent`. Full mechanics: `build-kit/patterns/placeholder-tools.md`.
+`{{_placeholder.TOOL <name>}}` reserves a slot. Use for template / starter agents to telegraph future capabilities. Avoid for marketplace publishing (validation blocks) or production SLAs (mock echo). Companion skill: `/template-agent`. Full mechanics: `build-kit/agents/prompt/placeholder-tools.md`.
 
 ### Deep system-prompt design reference
 
-Identity-framing examples, output-format selection, formatting elements (variables, comments, dividers, inline code), tool-pill UI insertion, action-ID retrieval workflow, prompt-readability tradeoffs: `build-kit/patterns/system-prompts.md`.
+Identity-framing examples, output-format selection, formatting elements (variables, comments, dividers, inline code), tool-pill UI insertion, action-ID retrieval workflow, prompt-readability tradeoffs: `build-kit/agents/prompt/system-prompts.md`.
 
 ---
 
@@ -64,12 +64,12 @@ For tools called many times in a row (once per contact, once per account), add a
 
 ### Finding Tool Steps
 
-Copy native transformation names and entity IDs from the Relevance UI before asking Claude to read / modify. Direct ID access is faster than search. Step types reference: `build-kit/tools/tool-transformations.md`.
+Copy native transformation names and entity IDs from the Relevance UI before asking Claude to read / modify. Direct ID access is faster than search. Step types reference: `build-kit/agents/tools/tool-transformations.md`.
 
 ### Icons
 
 - Always set a tool icon via the `emoji` field. Icons should let the user quickly infer the task type.
-- Integration-specific tools: use branded logos via public image URLs (`emoji` accepts any public URL). Working URLs tracked in `build-kit/tools/tool-icon-urls.md`.
+- Integration-specific tools: use branded logos via public image URLs (`emoji` accepts any public URL). Working URLs tracked in `build-kit/agents/tools/tool-icon-urls.md`.
 - **Icon URL validation:** must NOT contain spaces or unencoded special characters. The API accepts them but the UI renders broken. Use URLs from `tool-icon-urls.md` or unicode emoji shortcodes.
 - For non-integration tools (utilities, scrapers, generic research), prefer unicode emoji shortcodes. They always render correctly.
 
@@ -91,7 +91,7 @@ Tools with `is_fixed_param: true` cannot be filled by the agent. If no `default`
 
 ### state_mapping and Inter-Step Data Flow
 
-**Headline rules** (full mechanism + worked examples in `build-kit/tools/state-mapping.md`):
+**Headline rules** (full mechanism + worked examples in `build-kit/agents/tools/state-mapping.md`):
 
 - Every tool MUST have a `state_mapping` field.
 - No curly braces in state_mapping VALUES: use `"params.name"`, NOT `"{{params.name}}"`.
@@ -124,7 +124,7 @@ Never pass file path references (`{{FILE:path}}`) to MCP tool parameters. MCP to
 
 Any tool whose `transformations.steps[]` includes a KT operation MUST start with:
 
-1. **Read `build-kit/tools/knowledge-tables.md` in full.** Format A vs B filter shapes, `data.` prefix rules, partial-update semantics, delete endpoints all live there.
+1. **Read `build-kit/agents/knowledge/knowledge-tables.md` in full.** Format A vs B filter shapes, `data.` prefix rules, partial-update semantics, delete endpoints all live there.
 2. **Grep the project for existing uses of the transformation:** treat zero matches as a caution signal.
 
 Enforced by PreToolUse hook on `relevance_upsert_tool` (`scripts/pre-tool-kt-check.sh`).
@@ -155,7 +155,7 @@ Top trip-ups:
 - **`relevance_attach_tools_to_agent`** to attach tools. Auto-merges.
 - **`relevance_save_agent_draft`** only for full config rewrites (e.g. complete actions array, `params_schema`). PUT semantics: always fetch full config first with `relevance_get_agent(summary: false)`, merge, then save.
 
-Full operations matrix, phone agent runtime safeguards, fetch-merge-save code: `PLATFORM_MECHANICS.md` § "Agent Write Operations" and `build-kit/patterns/agent-write-operations.md`.
+Full operations matrix, phone agent runtime safeguards, fetch-merge-save code: `PLATFORM_MECHANICS.md` § "Agent Write Operations" and `build-kit/agents/agent-write-operations.md`.
 
 ### Avatars
 
@@ -173,7 +173,7 @@ The Variables tab in the agent UI shows editable fields that inject into the sys
 - Use `enum` for dropdown fields (tone, language, region presets).
 - Add `{{_comment.Edit these values in the Variables tab - no rebuild required}}` near the variables in the prompt: visible in editor, hidden from LLM.
 
-Full implementation pattern, JSON example, workflow: `build-kit/patterns/agent-variables.md`.
+Full implementation pattern, JSON example, workflow: `build-kit/agents/prompt/agent-variables.md`.
 
 ### Descriptions and Documentation
 
@@ -232,7 +232,7 @@ When creating a new agent / tool / workforce, create a testing rubric BEFORE bui
 
 **Full orchestrator design reference:** `playbooks/use-cases/multi-agent-orchestration.md`. Mental model, generative principles, capability contracts, scale guardrails, dispatch pattern decision, approval handling, failure catalog. Load that first when designing an orchestrator.
 
-**Platform mechanics for workforces** (edge types, `additionalProperties` rules, `relevance_update_workforce` merge semantics, parallel tool calls, mental model): `PLATFORM_MECHANICS.md` § "Workforce Architecture" + `build-kit/patterns/workforce-patterns.md`.
+**Platform mechanics for workforces** (edge types, `additionalProperties` rules, `relevance_update_workforce` merge semantics, parallel tool calls, mental model): `PLATFORM_MECHANICS.md` § "Workforce Architecture" + `build-kit/workforces/workforce-patterns.md`.
 
 The highest-impact build rules below.
 
@@ -270,7 +270,7 @@ Never save incomplete records with a success-like status. If a downstream step r
 
 ### Entity Name Matching
 
-Tools that look up records by company / account / entity name should use substring or fuzzy matching, not exact string equality. Agents are inconsistent with naming (legal suffixes, parenthetical regional names, abbreviations). Implementation patterns: `build-kit/tools/platform-tool-gotchas.md`.
+Tools that look up records by company / account / entity name should use substring or fuzzy matching, not exact string equality. Agents are inconsistent with naming (legal suffixes, parenthetical regional names, abbreviations). Implementation patterns: `build-kit/agents/tools/platform-tool-gotchas.md`.
 
 ---
 

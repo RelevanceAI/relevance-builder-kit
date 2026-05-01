@@ -43,7 +43,7 @@ The `results` array contains up to 3 entries. It can be empty if no LinkedIn com
 1. **Native step:** `google_search`. Input: `f"site:linkedin.com/company {query}"`. Limit: 10.
 2. **JS code step:** filter results to URLs matching `^https?://(www\\.)?linkedin\\.com/company/[a-z0-9-]+/?$`. Take the first 3. Return as `results`.
 
-The JS step's `state_mapping` exposes `query` (from `params.query`) and `raw_results` (from `steps.google_search.output.transformed.results`). See `build-kit/tools/state-mapping.md` for the inter-step data flow rules.
+The JS step's `state_mapping` exposes `query` (from `params.query`) and `raw_results` (from `steps.google_search.output.transformed.results`). See `build-kit/agents/tools/state-mapping.md` for the inter-step data flow rules.
 
 ## OAuth
 

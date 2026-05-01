@@ -35,4 +35,4 @@ Come here when:
 
 - `build-kit/CLAUDE.md` -- build-kit hub
 - `.claude/rules/BUILD_PRACTICES.md` -- integration build rules (prefer native, OAuth consistency)
-- `build-kit/tools/` -- tool-building reference for the Relevance AI side
+- `build-kit/agents/tools/` -- tool-building reference for the Relevance AI side

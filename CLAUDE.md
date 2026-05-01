@@ -59,7 +59,8 @@ Routing for the most common workflows. Each domain owns specific concerns.
 | End-of-session retro and learnings | `/capture-learning` skill |
 | First-time setup | `bash setup.sh` (run from kit root, interactive) |
 | Platform API and state mapping | `.claude/rules/PLATFORM_MECHANICS.md` |
-| Tool transformations | `build-kit/tools/` |
+| Single-agent reference (prompt, tools, knowledge, triggers, phone) | `build-kit/agents/` |
+| Workforce / multi-agent orchestration | `build-kit/workforces/` |
 | Integrations (HubSpot, Salesforce, Slack, etc.) | `build-kit/integrations/` |
 
 ### Architecture
@@ -67,9 +68,9 @@ Routing for the most common workflows. Each domain owns specific concerns.
 | Need | Go to |
 |------|-------|
 | Use case playbooks | `playbooks/use-cases/` |
-| Reusable patterns | `build-kit/patterns/` |
-| Phone agents | `build-kit/phone-agents.md` |
-| Evals and monitoring | `build-kit/evals-and-monitoring.md` |
+| Documentation patterns + cross-cutting troubleshooting | `build-kit/patterns/` |
+| Phone agents | `build-kit/agents/phone/phone-agents.md` |
+| Evals and monitoring | `build-kit/evals-and-monitoring/` |
 
 ### Your builds
 

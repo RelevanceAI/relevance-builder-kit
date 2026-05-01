@@ -114,4 +114,4 @@ Confirm which objects the agent should read/write:
 - `build-kit/integrations/outreach.md` -- Outreach.io (common downstream from Salesforce)
 - `build-kit/integrations/salesloft.md` -- SalesLoft (alternative to Outreach)
 - `build-kit/integrations/zoominfo.md` -- ZoomInfo enrichment
-- `build-kit/patterns/crm-knowledge-architecture.md` -- CRM knowledge architecture patterns
+- `build-kit/agents/knowledge/crm-knowledge-architecture.md` -- CRM knowledge architecture patterns

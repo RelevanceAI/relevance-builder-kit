@@ -92,7 +92,7 @@ Agent -> launch Chromium -> navigate(url)
 
 ### Level 3: AI-Driven Browser Automation (AI Browser / Airtop)
 
-Instead of scripted selectors, an AI model looks at the page and decides what to do. Element targeting is natural language ("the email field", "the Submit button"). On Relevance AI this is the AI Browser integration (powered by Airtop). Full technical reference: `build-kit/tools/ai-browser.md`.
+Instead of scripted selectors, an AI model looks at the page and decides what to do. Element targeting is natural language ("the email field", "the Submit button"). On Relevance AI this is the AI Browser integration (powered by Airtop). Full technical reference: `build-kit/agents/tools/ai-browser.md`.
 
 ```
 Agent -> launch browser -> screenshot page
@@ -137,7 +137,7 @@ Use this as a first-pass routing decision. Encode the result in the registry's `
 | Tool | Purpose | Notes |
 |------|---------|-------|
 | HTTP POST submitter | Level 1 submissions | Custom tool. Fetches the page, extracts tokens, POSTs. Verify tokens per run (they can expire / rotate) |
-| AI Browser tool set | Level 3 submissions | Either platform `browser_*` steps (convenient, limited) or a bespoke Airtop Direct API tool suite (full control, BYO key). See `build-kit/tools/ai-browser.md` for the full menu and tradeoffs |
+| AI Browser tool set | Level 3 submissions | Either platform `browser_*` steps (convenient, limited) or a bespoke Airtop Direct API tool suite (full control, BYO key). See `build-kit/agents/tools/ai-browser.md` for the full menu and tradeoffs |
 | System-of-record check | Validator stage | Query the CRM / data lake for the dummy record. Use distinct search keys (unique email, unique company name) to avoid false positives from real users |
 | Run logger | Record every test | Writes a row to the run-log knowledge table: timestamp, form, strategy, submission status, verification status, notes |
 | Cleanup tool (or external flow) | Dummy data hygiene | Either a tool the agent calls post-verification, or an external workflow (Power Automate, Zapier) that runs on a schedule and purges flagged test records |
@@ -175,7 +175,7 @@ Use this as a first-pass routing decision. Encode the result in the registry's `
 
 ## Related Files
 
-- `build-kit/tools/ai-browser.md` -- AI Browser / Airtop full technical reference (platform steps, Direct API, gotchas, limitations)
-- `build-kit/tools/platform-tool-gotchas.md` -- General tool gotchas (Cloudflare TLS fingerprinting, JS vs Python sandbox auth)
+- `build-kit/agents/tools/ai-browser.md` -- AI Browser / Airtop full technical reference (platform steps, Direct API, gotchas, limitations)
+- `build-kit/agents/tools/platform-tool-gotchas.md` -- General tool gotchas (Cloudflare TLS fingerprinting, JS vs Python sandbox auth)
 - `playbooks/use-cases/multi-agent-orchestration.md` -- Graduation path when the single-agent default outgrows itself
 - `.claude/rules/BUILD_PRACTICES.md` -- Unit of Action, audit patterns, state_mapping

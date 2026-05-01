@@ -110,5 +110,5 @@ Enforced at deploy time by `scripts/pre-tool-system-prompt-check.sh` (PreToolUse
 
 - `.claude/rules/BUILD_PRACTICES.md` § "System Prompts" -- headline rules + the deploy-blocking constraints
 - `.claude/rules/DOC_RULES.md` § "system-prompt.md and other deployable prompt files" -- file split between `agent.md` (human docs) and `system-prompt.md` (deployable)
-- `build-kit/patterns/placeholder-tools.md` -- `{{_placeholder.TOOL}}` design pattern
-- `build-kit/patterns/agent-variables.md` -- `params_schema` for the Variables tab
+- `build-kit/agents/prompt/placeholder-tools.md` -- `{{_placeholder.TOOL}}` design pattern
+- `build-kit/agents/prompt/agent-variables.md` -- `params_schema` for the Variables tab
