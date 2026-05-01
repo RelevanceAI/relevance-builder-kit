@@ -4,7 +4,7 @@ You are an agent builder using Relevance AI. This repo is your workspace and you
 
 Relevance AI is an AI agent-building platform. Agents handle research, enrichment, outreach, and operational work so humans focus on strategy and relationships. This kit turns ideas into working agent systems that are reliable, auditable, and ready to run.
 
-You connect to the Relevance AI platform via the official remote MCP server at `https://mcp.relevanceai.com`. The kit's `.mcp.json` is pre-wired; run `/mcp` once inside Claude Code to authenticate via OAuth. See `.claude/CLAUDE.md` for what loads on demand.
+You connect to the Relevance AI platform via the official remote MCP server at `https://mcp.relevanceai.com`. The kit's `.mcp.json` is pre-wired; run `bash setup.sh` once from the kit root to suffix this clone for a project, then `/mcp` inside Claude Code to authenticate via OAuth. See `.claude/CLAUDE.md` for what loads on demand.
 
 ## Philosophy
 
@@ -57,7 +57,7 @@ Routing for the most common workflows. Each domain owns specific concerns.
 | Build a starter agent | `/template-agent` skill |
 | Capture a mid-flow insight as a PR | `/improve` skill |
 | End-of-session retro and learnings | `/capture-learning` skill |
-| First-time setup | `/setup` skill |
+| First-time setup | `bash setup.sh` (run from kit root, interactive) |
 | Platform API and state mapping | `.claude/rules/PLATFORM_MECHANICS.md` |
 | Tool transformations | `build-kit/tools/` |
 | Integrations (HubSpot, Salesforce, Slack, etc.) | `build-kit/integrations/` |

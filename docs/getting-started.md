@@ -6,7 +6,7 @@ This guide walks you through setting up the Relevance Builder Kit and getting or
 
 The Relevance Builder Kit is a Claude Code workspace for building Relevance AI agents with proven patterns: separation of concerns, documentation, production readiness. It connects to the Relevance AI platform via the official remote MCP server at `https://mcp.relevanceai.com` using OAuth, so no API keys are stored locally and no plugin is required.
 
-**Key concept: one folder per project.** Each Relevance AI project gets its own clone of this kit. To work on multiple projects, you'll have multiple folders (e.g., `relevance-builder-personal`, `relevance-builder-team`), each with its own MCP connection.
+**Key concept: one folder per project.** Each Relevance AI project gets its own clone of this kit. To work on multiple projects, you'll have multiple folders (e.g., `relevance-builder-kit-personal`, `relevance-builder-kit-team`), each with its own MCP connection.
 
 ## Prerequisites
 
@@ -27,32 +27,27 @@ cd relevance-builder-kit
 
 ### 2. Run setup
 
-**Option A (recommended): run the script directly:**
+Run the interactive setup script from the kit root:
 
 ```bash
 bash setup.sh
 ```
 
-The script will:
+`setup.sh` will:
 
-1. Verify your `.mcp.json` is wired to the Relevance AI prod MCP server (`mcp.relevanceai.com`)
-2. Ask for a project name and rename the folder (e.g., `relevance-builder-team`)
-3. Customize `.mcp.json` with a project-specific server name (so multiple clones don't collide)
-4. Configure the Claude Code statusline (shows project folder + model)
+1. Check prerequisites (python3, git, claude CLI)
+2. Verify `.mcp.json` is wired to the Relevance AI prod MCP server (`mcp.relevanceai.com`)
+3. Ask for a folder suffix -- use the **name of the Relevance AI project this clone will build agents in**, lowercased and hyphenated (e.g. `lead-research`, `acme-prod`). Renames the folder to `relevance-builder-kit-{suffix}` and the MCP server to `relevance-ai-kit-{suffix}`, so it's obvious later which folder belongs to which Relevance project
+4. Walk you through the Claude Code statusline (`[a]ll on / [n]one / [c]ustomise`) and write choices to `.claude/statusline.conf`
 5. Optionally add a `ccd` shell alias for `claude --dangerously-skip-permissions`
-6. Optionally create your first build folder scaffold
+6. Optionally scaffold your first build folder
 7. Run a verification check
 
-**Option B: let Claude do it.** Start Claude Code and type `/setup`. It walks through each step conversationally.
+The script renames the folder, so close any other terminals open in the old path before running. After it finishes, `cd` into the renamed folder before starting Claude Code.
 
 ### 3. Authenticate via OAuth
 
-```bash
-cd relevance-builder-{your-project-name}
-claude
-```
-
-In Claude Code, run:
+Once `setup.sh` finishes, start Claude Code in the renamed folder and run:
 
 ```
 /mcp
@@ -70,17 +65,17 @@ What project am I in and how many tools do I have?
 
 ## Understanding the Statusline
 
-The statusline at the bottom of Claude Code shows:
+The statusline at the bottom of Claude Code shows a minimal default:
 
 ```
-relevance-builder-team  branch main  claude-sonnet-4-6
+⚡ relevance-builder-kit-team 🌿 main 🤖 Opus 4.7
 ```
 
 - **Project folder name** -- which Relevance AI project you're connected to
 - **Branch** -- current git branch
 - **Model** -- the Claude model in use
 
-To reconfigure: `bash scripts/setup-statusline.sh`
+`setup.sh` walks you through eight optional sections (vim mode, context bar, cost, duration, lines changed, output tokens, cache, rate limits) and writes your choices to `.claude/statusline.conf`. Re-run `bash setup.sh` to change them.
 
 ## Multiple Projects
 
@@ -88,8 +83,7 @@ Each project gets its own folder. To set up a new project:
 
 ```bash
 git clone https://github.com/RelevanceAI/relevance-builder-kit.git
-cd relevance-builder-kit && bash setup.sh   # Give it a different project name
-claude                                       # Then /mcp to authenticate
+cd relevance-builder-kit && bash setup.sh   # Use the new Relevance project's name as the suffix, then `claude` and `/mcp`
 ```
 
 To switch between projects, open a separate terminal window in the appropriate folder. Each folder maintains its own OAuth session, so no re-authentication is needed after the first time.
@@ -211,5 +205,5 @@ This loads the 12-point design rubric and the v0-to-vN roadmap. It walks you thr
 - **MCP tools aren't responding.** Run `bash scripts/verify-setup.sh` to check connectivity. Try `/mcp` to re-authenticate.
 - **Stale context.** Use `/clear` to reset conversation context.
 - **Which project am I connected to?** Check the statusline, or ask Claude "what project am I in?"
-- **Setup script failed partway.** Re-run `bash setup.sh`. It's idempotent. Safe to run again.
+- **Setup failed partway.** Re-run `bash setup.sh` from the kit root. It's idempotent. Safe to run again.
 - **Need to re-authenticate.** Run `/mcp` in Claude Code. OAuth tokens may expire; re-login via browser.
