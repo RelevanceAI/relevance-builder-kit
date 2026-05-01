@@ -1,7 +1,7 @@
 #!/bin/bash
 # Verify Relevance Builder Kit setup is working correctly.
 # Run standalone:  bash scripts/verify-setup.sh
-# Also called automatically by setup.sh
+# Also called automatically by the /setup skill at the end of setup.
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_DIR="$(dirname "$SCRIPT_DIR")"
@@ -71,7 +71,7 @@ if [ -f "$MCP_JSON" ]; then
     check_fail ".mcp.json is not valid JSON"
   fi
 else
-  check_fail ".mcp.json not found (run setup.sh to generate it)"
+  check_fail ".mcp.json not found (run /setup inside Claude Code to restore it)"
 fi
 
 # --- Statusline ---
@@ -99,7 +99,7 @@ print('yes' if 'statusLine' in d else 'no')
   fi
 else
   check_warn "Project settings file not found at $PROJECT_SETTINGS" \
-    "Re-run setup: bash setup.sh"
+    "Re-run setup: open Claude Code in this folder and run /setup"
 fi
 
 # --- Summary ---

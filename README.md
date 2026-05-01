@@ -16,16 +16,16 @@ Each clone of this kit authenticates into a single Relevance AI project via OAut
 
 ```
 ~/relevance-projects/
-  relevance-builder-prod/
-  relevance-builder-staging/
-  relevance-builder-marketing/
+  relevance-builder-kit-prod/
+  relevance-builder-kit-staging/
+  relevance-builder-kit-marketing/
 ```
 
-You run `setup.sh` once per clone (it gives the folder a project-specific suffix) and `/mcp` once inside Claude Code to wire that folder to its Relevance AI project. After that, switching projects is just opening a terminal in a different folder. Each folder keeps its own OAuth session, MCP connection, and build context, so credentials and work never get mixed across projects.
+You run `/setup` once per clone inside Claude Code (it gives the folder a project-specific suffix and walks you through the statusline) and `/mcp` once to wire that folder to its Relevance AI project. After that, switching projects is just opening a terminal in a different folder. Each folder keeps its own OAuth session, MCP connection, and build context, so credentials and work never get mixed across projects.
 
 ## Before You Start
 
-You need four things on your machine. The setup script checks these and stops if any are missing.
+You need four things on your machine. `/setup` checks these and stops if any are missing.
 
 | Tool | Why | How to install (Mac) | How to install (Windows) |
 |------|-----|---------------------|--------------------------|
@@ -44,35 +44,35 @@ You also need a **Relevance AI account** -- sign up or log in at [app.relevancea
 # 1. Clone the kit
 git clone https://github.com/RelevanceAI/relevance-builder-kit.git
 
-# 2. Run setup (asks you a few questions, takes about 5 minutes)
-cd relevance-builder-kit && bash setup.sh
+# 2. Start Claude Code from the kit folder
+cd relevance-builder-kit && claude
 
-# 3. cd into the renamed folder, then start Claude Code
-cd ../relevance-builder-{your-suffix}
-claude
+# 3. Inside Claude Code, run setup (asks you a few questions, takes about 5 minutes)
+/setup
 
-# 4. Inside Claude Code, authenticate with Relevance AI (OAuth)
+# 4. Then authenticate with Relevance AI (OAuth)
 /mcp
 ```
 
 > The kit ships pre-wired to the Relevance AI prod MCP server (`mcp.relevanceai.com`). No local plugin or submodule to install.
 
-### What setup.sh asks you
+### What `/setup` asks you
 
-The script is interactive. Read each prompt -- it tells you what's about to happen and lets you skip optional bits.
+`/setup` walks you through each step conversationally. You can skip optional bits.
 
-1. **Project name** -- The setup renames your folder to `relevance-builder-{name}` so you can have one folder per Relevance AI project. Pick something short: `personal`, `team`, `marketing`.
+1. **Folder name** -- A short suffix like `dev`, `prod`, `staging`, `personal`, or `team`. Appended to the kit name so the folder becomes `relevance-builder-kit-{suffix}` and the MCP server becomes `relevance-ai-kit-{suffix}`. One folder per Relevance AI project.
 2. **Rename confirmation** -- Confirms the folder rename. Close any other terminals open in this directory first, otherwise those shells will be orphaned.
-3. **`ccd` shortcut** (optional) -- Adds an alias for `claude --dangerously-skip-permissions`. Faster, but Claude can run shell commands and edit files without prompting -- only enable if you accept that tradeoff.
-4. **First build folder** (optional) -- Scaffolds `builds/{build-name}/` with a starter `agent.md` and `system-prompt.md`. Useful if you have a specific build in mind; skip otherwise.
+3. **Statusline walk-through** -- Eight optional sections (vim mode, context bar, cost, duration, lines changed, output tokens, cache, rate limits). Yes / no per section; choices write to `.claude/statusline.conf`. Default is minimal: project + branch + model.
+4. **`ccd` shortcut** (optional) -- Adds an alias for `claude --dangerously-skip-permissions`. Faster, but Claude can run shell commands and edit files without prompting -- only enable if you accept that tradeoff.
+5. **First build folder** (optional) -- Scaffolds `builds/{build-name}/` with a starter `agent.md` and `system-prompt.md`. Useful if you have a specific build in mind; skip otherwise.
 
-After all that the script configures the statusline, enables a notification chime, and runs a verification check.
+After all that, `/setup` runs a verification check.
 
 ### After setup
 
-Run `claude` from the renamed folder. The very first thing to do inside Claude Code is `/mcp` -- this opens your browser for OAuth login to Relevance AI. Pick the project that matches the folder name and authorize. You're done -- no need to re-authenticate in this folder again.
+Once `/setup` finishes, run `/mcp` -- this opens your browser for OAuth login to Relevance AI. Pick the project that matches the folder name and authorize. You're done -- no need to re-authenticate in this folder again.
 
-Type `/setup` if anything is missing or you want to redo a step conversationally.
+Re-run `/setup` any time you want to redo a step conversationally.
 
 ## Documentation
 
@@ -106,7 +106,7 @@ Curated highlights:
 | `/document-workforce` | Document a workforce and all its agents from the platform into local markdown |
 | `/improve` | Capture a single mid-flow insight as a well-scoped PR. Substance-strict bar, refuses ~half its invocations |
 | `/capture-learning` | End-of-session retro: extract reusable learnings, update knowledge base or open a PR |
-| `/setup` | First-time setup, conversational. Same flow as `setup.sh` but inside Claude Code |
+| `/setup` | First-time kit setup: folder naming, `.mcp.json`, statusline walk-through, build folder scaffold |
 
 There are more skills in `.claude/skills/`. Browse them, and **add your own** when you spot a workflow worth automating: see [Contributing](#contributing) below.
 
@@ -124,18 +124,17 @@ Operational skills (managing agents, tools, workforces, knowledge, evals, analyt
 
 ```
 docs/                   # Human-readable documentation
-setup.sh                # One-time setup (run from repo root)
 .mcp.json               # MCP target (Relevance AI prod, OAuth)
 scripts/
-  setup-statusline.sh        # Statusline reconfiguration
+  statusline.sh              # Statusline (config-driven via .claude/statusline.conf)
+  setup-statusline.sh        # Recovery: re-wire statusLine entry into .claude/settings.json
   verify-setup.sh            # Post-setup health check
-  statusline.sh              # Statusline (active project + model)
   lint-system-prompts.sh     # CLI lint for deployable prompts
   pre-tool-*.sh              # Pre-deploy hooks for agent and KT writes
 builds/                 # Your own build docs (one folder per build)
 .claude/
   rules/                # Governance + platform mechanics (auto-loaded)
-  skills/               # Slash-command skills
+  skills/               # Slash-command skills (including /setup)
 build-kit/              # Deep reference (tools, integrations, patterns, templates)
 playbooks/              # Use-case architecture playbooks
 ```
@@ -144,7 +143,7 @@ playbooks/              # Use-case architecture playbooks
 
 - **`command not found: claude`** -- Claude Code CLI isn't installed or isn't on your PATH. Re-install from [claude.com/claude-code](https://claude.com/claude-code) and restart your terminal.
 - **`command not found: git` or `python3`** -- See the prerequisites table above.
-- **Setup script failed partway** -- Just re-run `bash setup.sh`. It's idempotent -- safe to run as many times as you need.
+- **Setup failed partway** -- Just re-run `/setup` inside Claude Code. It's idempotent -- safe to run as many times as you need.
 - **MCP tools aren't responding** -- Inside Claude Code, run `/mcp` to re-authenticate. If that doesn't fix it, run `bash scripts/verify-setup.sh` from the repo root.
 - **Anything else** -- Open the kit in Claude Code and run `/setup`. It walks the setup steps conversationally and can diagnose what's missing.
 
@@ -205,6 +204,6 @@ The kit ships with `.mcp.json` pre-wired to the official Relevance AI prod MCP s
 }
 ```
 
-`setup.sh` renames the server entry to `relevance-ai-{your-project-name}` so multiple kit clones can run side by side without conflicting. Auth is OAuth: running `/mcp` inside Claude Code opens your browser, you log in to Relevance AI, pick the project, and you're connected. No API keys, no local plugin.
+`/setup` renames the server entry to `relevance-ai-kit-{suffix}` so multiple kit clones can run side by side without conflicting. Auth is OAuth: running `/mcp` inside Claude Code opens your browser, you log in to Relevance AI, pick the project, and you're connected. No API keys, no local plugin.
 
 Operational skills (managing agents, tools, workforces, knowledge tables, evals, analytics) load on demand from the remote MCP. The skills in `.claude/skills/` are kit-specific build playbooks layered on top.

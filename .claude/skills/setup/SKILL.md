@@ -5,13 +5,13 @@ description: First-time setup for this kit -- MCP config verification (prod remo
 
 ## When to Use
 
-When someone opens Claude Code in this kit for the first time and needs to get set up. This does everything `setup.sh` does, but conversationally so the user does not need to leave Claude Code.
+When someone opens Claude Code in this kit for the first time and needs to get set up. This is the canonical setup path: folder naming, `.mcp.json` server name, statusline walk-through, `ccd` alias, first build folder, and verification, all conversational. The legacy `bash setup.sh` flow has been retired (it now just redirects here).
 
 ## Architecture Overview
 
 Each Relevance AI project gets its own clone of this kit:
 
-- **One folder per project** (e.g., `relevance-builder-personal`, `relevance-builder-team`)
+- **One folder per project** (e.g., `relevance-builder-kit-personal`, `relevance-builder-kit-team`)
 - **OAuth authentication** against the official Relevance AI MCP server (no API keys stored locally, no plugin)
 - **HTTP MCP server** connects to `mcp.relevanceai.com` (remote, loads operational skills on demand)
 
@@ -63,6 +63,8 @@ mv /path/to/relevance-builder-kit /path/to/relevance-builder-kit-{suffix}
 ```
 
 If the current folder is already `relevance-builder-kit-something`, treat the existing suffix as already-set and skip the rename unless the user wants to change it.
+
+**After a rename, the running Claude Code session's CWD is now stale** (`$CLAUDE_PROJECT_DIR` and any open shell point at the old path). Tell the user to exit Claude Code, `cd` into the renamed folder, and run `claude` again before continuing the rest of `/setup`. They can rerun `/setup` from the new folder and it will skip the rename (Step 2 is idempotent) and pick up at Step 3.
 
 ### Step 3: Customize .mcp.json
 
