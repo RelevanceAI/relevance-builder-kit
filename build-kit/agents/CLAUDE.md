@@ -13,6 +13,7 @@ Everything about a single agent: how it thinks (prompt), what it can do (tools),
 ## Top-level files
 
 - `agent-write-operations.md` -- Full operations matrix (`patch` / `upsert` / `attach-tools` / `save-draft`), phone agent runtime safeguards, fetch-merge-save pattern
+- `memory.md` -- Agent memory: `memory_level: "project"` vs `"user"`, what each is keyed on, the cross-workforce contamination risk when the same agent ID is reused, and how memory differs from variables and knowledge tables
 
 ## Routing
 
@@ -24,6 +25,7 @@ Come here when:
 - Configuring how an agent is triggered (schedule, webhook, form, chat)
 - Building a phone agent
 - Modifying an agent via MCP write operations
+- Enabling agent memory or worried about memory contamination across workforces
 
 ## See Also
 

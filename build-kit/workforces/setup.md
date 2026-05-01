@@ -111,14 +111,14 @@ const exec = await relevance_get_workforce_task_messages({
 
 `workforce_state` values:
 
-| State                       | Meaning                                                  |
-|-----------------------------|----------------------------------------------------------|
-| `running`                   | Still executing                                          |
-| `completed`                 | Finished successfully                                    |
-| `pending-approval`          | Blocked on a human approval (`always-ask` edge)          |
-| `errored-pending-approval`  | Errored, waiting on human input                          |
-| `escalated`                 | An agent called `escalate_to_manager`                    |
-| `execution-limit-reached`   | Hit dispatch / wall-clock limit                          |
+| State                       | Meaning                                                                                |
+|-----------------------------|----------------------------------------------------------------------------------------|
+| `running`                   | Still executing                                                                        |
+| `completed`                 | Finished successfully                                                                  |
+| `pending-approval`          | Blocked on a human approval (a tool call needs sign-off, or `always-ask` edge fired)   |
+| `errored-pending-approval`  | An inner agent hit its autonomy budget with `autonomy_limit_behaviour: "ask-for-approval"` and is waiting for human approval to continue |
+| `escalated`                 | An agent called `escalate_to_manager`                                                  |
+| `execution-limit-reached`   | Hit the per-task node-execution cap (100 for `default`, 5000 for `chat`). **Hard-terminal — see below.** |
 
 ### Reading Execution Results
 
@@ -209,10 +209,37 @@ When the data passed between agents is large or structured, write it to a knowle
 Most common causes:
 
 1. An agent is waiting for approval (`action_behaviour: "always-ask"`). Check `exec.pending_approvals` — if non-empty, that's it.
-2. An agent hit its `autonomy_limit`. Check the agent run's `task_details.finished_state`.
+2. An agent hit its `autonomy_limit`. See "Inner agent hit `autonomy_limit`" below.
 3. A tool execution is genuinely slow (long-running scrape, slow API).
 
 `exec.results.filter(r => r.content.type === "workforce-agent-run")` and inspect each `task_details.finished_state` — anything that isn't `completed` is the blocker.
+
+### Inner agent hit `autonomy_limit`
+
+Behaviour depends on the inner agent's `autonomy_limit_behaviour` field. **The default mismatches between the API and UI**: the API schema defaults to `"ask-for-approval"`, but the builder UI creates new agents with `"terminate-conversation"`. Check the agent's actual config rather than assume.
+
+| `autonomy_limit_behaviour` | Inner agent `finished_state`        | What the parent agent sees                                             | Workforce task state                                  | How it resolves                                                           |
+|----------------------------|--------------------------------------|------------------------------------------------------------------------|-------------------------------------------------------|---------------------------------------------------------------------------|
+| `ask-for-approval`         | `errored-pending-approval`           | Propagated approval pause (parent's tool call returns "Sub-agent requires user approval before continuing.") | `errored-pending-approval`                            | Human approves the request → workforce resumes from where the inner agent stopped |
+| `terminate-conversation`   | `unrecoverable`                      | Failed tool result ("Sub-agent terminated with errors…")               | Depends on parent error handling; may cascade to `unrecoverable` or parent may continue | No approval path. Parent must handle the error itself or the task fails  |
+
+There is one approval queue per workforce task — not per agent. Pending approvals carry an `agent_chain` array recording the hierarchy (inner agent's identity at origin, parent agents appended). Workforce type (`default` vs `chat`) does not change autonomy-limit handling — the only difference between the two is which HTTP endpoint approvals are submitted back to.
+
+> *Note: approval propagation from an inner agent to its parent depends on a backend feature flag (`SubagentApprovalPropagationKillswitch`) being on. If a workforce sits in `errored-pending-approval` but no propagated approval surfaces in the UI, this flag may have been switched off — confirm with the platform team before debugging deeper.*
+
+### `execution-limit-reached`
+
+The per-task node-execution cap is **hard-terminal, not pause-and-resume**. When hit:
+
+- The state is set to `execution-limit-reached` and the next platform call returns HTTP 429 with body `"Workforce execution limit reached. Please create a new task, or try again later."`
+- Internally, this state maps to `unrecoverable`. There is no resume / retry / fork-from-partial-state API
+- The UI disables the message input on the task with `"This task has reached its usage limit for today, please try again later."` — no resume CTA is shown
+- The window is **calendar-day** (resets at server-local midnight), not rolling-24h. Note: the constant is named `_PER_24_HOURS` in source, but the implementation uses `moment().startOf("day")` — the rolling-24h naming is misleading
+- The counter is scoped to a single `workforce_task_id`. **It does not aggregate across tasks.** Running 50 separate tasks each touching 50 nodes against the same `default` workforce is fine — each task sits at 50 / 100, well within limit. There is no workforce-wide or project-wide ceiling
+
+**Recovery options:** there is no native API to resume or reset. The practical workaround is to **trigger a new task** (the counter is fresh on a new `workforce_task_id`). If the work is mid-pipeline and re-running the whole task would be wasteful, design upstream agents to be idempotent and self-skip already-completed records — the new task can resume work without redoing complete steps.
+
+A per-project override exists via the `workforce-daily-execution-limit` PostHog feature flag (replaces the 100 / 5000 default with a value clamped to `1–1,000,000`). Limited to internal use; customer-facing builds should treat the published 100 / 5000 caps as the contract.
 
 ### "Agent isn't receiving context from the previous agent"
 

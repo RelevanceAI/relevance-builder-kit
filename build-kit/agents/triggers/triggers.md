@@ -221,6 +221,7 @@ Triggers are identified by `document_id`, which comes from `relevance_list_agent
 - **`message` for recurring triggers is the entire first input.** It is not a label. The agent must be able to act on this string alone — no implicit context.
 - **The trigger payload is the agent's first message.** Anything not in `message_template` won't reach the agent. Map every field the agent needs to reason about.
 - **`__conversation_id`, `__mas_id`, `__mas_store_id` are not set by triggers** — they're injected at runtime by the agent runner. To use them in tools, declare them in `params_schema` per `.claude/rules/PLATFORM_MECHANICS.md` § "Platform-Injected System Variables".
+- **Recurring triggers fire concurrently — there is no overlap guard.** If the previous task is still running when the next interval ticks, the platform spawns a *second* task in parallel. There is no `skip_if_running`, no queue, no `max_concurrent` config field. Behaviour is identical for agent-recurring triggers and workforce recurring trigger nodes (both `default` and `chat` workforce types). The only practical mitigation is to set the interval long enough that the typical run completes inside it. The platform emits a `WorkforceTaskTriggeredWhileRunning` metric when this happens, but it does not block. If your agent has shared state (writes to a knowledge table, updates a CRM record) that two concurrent runs would collide on, you must enforce the lock yourself — typically a "claimed_by / claimed_at" column on the input record so the second run sees it as already taken.
 
 ---
 

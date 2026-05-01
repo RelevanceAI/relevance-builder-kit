@@ -86,9 +86,11 @@ The actual trigger types and config schemas are the same. The difference is *whe
 | Aspect                       | Single agent                                                   | Workforce                                                                |
 |------------------------------|----------------------------------------------------------------|--------------------------------------------------------------------------|
 | Autonomy budget              | One `autonomy_limit` (action count) on the agent              | Each agent in the workforce has its own `autonomy_limit`                |
-| Approval surface             | One queue of pending approvals on this agent                   | Approvals come from any agent in the workforce; queue is per-agent      |
+| Approval surface             | One queue of pending approvals on this agent                   | One queue per workforce task — entries carry an `agent_chain` array recording the hierarchy (inner agent's identity at origin, parent agents appended) |
 | Forced human-in-the-loop     | Per-tool `action_behaviour: "always-ask"` on the agent        | Per-edge `action_behaviour: "always-ask"` on `tool-call` edges           |
-| Effect of refusal            | Conversation pauses                                            | Workforce pauses with state `pending-approval` or `errored-pending-approval` |
+| Limit-hit behaviour          | Depends on `autonomy_limit_behaviour`: `"ask-for-approval"` pauses, `"terminate-conversation"` errors | Inner agent's `autonomy_limit_behaviour` cascades up: `"ask-for-approval"` → workforce moves to `errored-pending-approval`; `"terminate-conversation"` → parent sees a failed tool result and decides |
+
+**Default mismatch worth flagging:** the API schema defaults `autonomy_limit_behaviour` to `"ask-for-approval"`, but the builder UI creates new agents with `"terminate-conversation"`. Always check the agent's actual config — the two paths produce very different workforce-level behaviour. See `setup.md` § "Inner agent hit `autonomy_limit`" for the full table.
 
 When an approval-gated tool fires inside a workforce, the parent agent's task pauses, not just the sub-agent's. Watch this in long pipelines — one approval blocks downstream nodes.
 
@@ -141,14 +143,14 @@ Workforce-level observability tells you *which workforce ran which task*. Agent-
 
 ### 10. Limits
 
-| Limit                     | Single agent                                       | Workforce                                                  |
-|---------------------------|----------------------------------------------------|------------------------------------------------------------|
-| Autonomy limit            | Per agent (action count, tunable)                 | Per agent inside the workforce, plus...                    |
-| Dispatch / execution limit| n/a                                                | 100 nodes/task/24h (`default`), 5000/task/24h (`chat`)    |
-| Wall-clock timeout        | Tied to task / conversation timeout               | Workforce-task timeout (longer than agent task)            |
-| Concurrency               | Per-agent (one in-flight task model)              | Workforce can have many tasks in flight; each task is isolated |
+| Limit                     | Single agent                                       | Workforce                                                                                                         |
+|---------------------------|----------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|
+| Autonomy limit            | Per agent (action count, tunable)                 | Per agent inside the workforce, plus...                                                                           |
+| Dispatch / execution limit| n/a                                                | 100 node-executions / task / **calendar day** (`default`), 5000 / task / day (`chat`). **Per-task, not per-workforce or per-project** — running 50 separate tasks against the same workforce is fine |
+| Wall-clock timeout        | Tied to task / conversation timeout               | Workforce-task timeout (longer than agent task)                                                                   |
+| Concurrency               | Per-agent (one in-flight task model)              | Workforce can have many tasks in flight; each task is isolated. Recurring triggers fire concurrently with no overlap guard — see `agents/triggers/triggers.md` |
 
-The dispatch limit on workforces is the most common cause of "stuck" or "execution-limit-reached" workforce-tasks — usually means the orchestrator is in a loop or fan-out is unbounded.
+The dispatch limit is the most common cause of "stuck" workforce-tasks — usually means the orchestrator is in a loop or fan-out is unbounded. **The hit is hard-terminal**: the task moves to `execution-limit-reached`, returns HTTP 429, no resume / retry / fork API exists. Recovery is to trigger a new task (the counter is per-`workforce_task_id`, fresh task = fresh counter). Window resets at server-local midnight, not on a rolling 24h basis. See `setup.md` § "`execution-limit-reached`" for the full details.
 
 ---
 
@@ -231,10 +233,11 @@ Does the work have multiple distinct skills (research + write + review)?
 
 ## See Also
 
-- `setup.md` -- workforce lifecycle, debugging, common issues
+- `setup.md` -- workforce lifecycle, debugging, common issues (see § "Inner agent hit `autonomy_limit`" and § "`execution-limit-reached`" for the full mechanics behind this file's "Approval flow" and "Limits" sections)
 - `edges.md` -- edge types, threading, action config, gotchas (full mechanics)
 - `workforce-patterns.md` -- mental model, type semantics (default vs chat), wall-clock + dispatch limits
 - `build-kit/agents/CLAUDE.md` -- single-agent reference (prompt, tools, knowledge, triggers, phone)
+- `build-kit/agents/memory.md` -- agent memory and the cross-workforce contamination risk when the same agent ID is reused
 - `build-kit/evals-and-monitoring/tool-simulation.md` -- the `tool_configs` vs `agent_configs.tool_configs` shape difference
 - `playbooks/multi-agent-orchestration.md` -- orchestrator design philosophy
 - `.claude/rules/PLATFORM_MECHANICS.md` § "Workforce Architecture" -- platform mechanics summary
