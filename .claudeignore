@@ -1,0 +1,36 @@
+# Build artefacts
+node_modules/
+dist/
+target/
+*.lock
+*.min.js
+__pycache__/
+
+# Claude Code internal state
+.claude/sessions/
+.claude/projects/
+.claude/plans/
+
+# Local-only files (credentials, scratch, OAuth tokens)
+.local/
+*.local.md
+*.local.json
+
+# Secrets and env files
+.env
+.env.*
+secrets.json
+credentials.json
+
+# Logs and test outputs
+*.log
+test-results/
+coverage/
+.coverage
+
+# Editor / OS noise
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store

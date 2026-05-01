@@ -1,0 +1,30 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__relevance-ai-.+__relevance_upsert_tool",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/scripts/pre-tool-kt-check.sh\"",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__relevance-ai-.+__relevance_(upsert_agent|patch_agent|save_agent_draft)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/scripts/pre-tool-system-prompt-check.sh\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash \"$CLAUDE_PROJECT_DIR/scripts/statusline.sh\""
+  }
+}
