@@ -24,8 +24,9 @@ Complete reference for Relevance AI's quality and observability features. Covers
 |-------|------|
 | Test sets, scenarios, running evals, build-type test depth, scenario templates | `test-suites.md` |
 | Evaluator scopes (test-set-specific vs global), creating evaluators, evaluator rule templates | `evaluators.md` |
-| LLM-as-judge: model selection, scoring tiers, hallucination evaluators, accuracy gates | `llm-as-judge.md` |
-| Tool simulation: `tool_simulation_config`, per-step overrides, timeout/error injection | `tool-simulation.md` |
+| LLM-as-judge: rule type selection, writing rules that pass/fail cleanly, model selection, cost control | `llm-as-judge.md` |
+| Tool simulation: config shape (agent vs workforce), levels & precedence, per-call indexing | `tool-simulation.md` |
+| Evaluating workforces specifically (what changes when `resource_type` flips) | `evaluating-workforces.md` |
 | Analytics dashboards, OpenTelemetry traces, audit logs, approval-mode monitoring | `monitoring-and-analytics.md` |
 
 ## See Also
