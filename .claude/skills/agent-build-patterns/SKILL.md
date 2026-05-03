@@ -10,7 +10,9 @@ description: Design philosophy, architecture patterns, and decision guides for p
 - Choosing which architecture pattern to apply
 - Debugging production failures (start with Unit of Action)
 
-## Quick Reference: 6 Patterns + Decision Sequence
+## Quick Reference: 8 Patterns + Decision Sequence
+
+Two foundational patterns (Unit of Action, Note Step) plus six system design patterns. Walk them in order.
 
 Check patterns in this order. The first "no" tells you which pattern to apply:
 

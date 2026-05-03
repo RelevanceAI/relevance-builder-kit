@@ -16,7 +16,7 @@ Everything you need to design, build, and run agents lives in this repo. Platfor
 
 **Builds are production systems, not prototypes.** Even demos become pilots. Pilots become production. Build it right the first time. Lightweight error handling takes 5 minutes and saves hours later.
 
-Full design philosophy and 6 design patterns: `.claude/skills/agent-build-patterns/`
+Full design philosophy and 8 patterns (2 foundational, 6 system design): `.claude/skills/agent-build-patterns/`
 
 ## Paradigm Shifts
 

@@ -129,7 +129,7 @@ Use this when learnings are validated and would benefit anyone using the kit, no
    - **Scrub anything build-specific or environment-specific.** Generic patterns go upstream; specifics stay in `builds/`.
 
 4. **Branch and commit:**
-   - Create branch: `learnings/<short-descriptor>` (e.g. `learnings/oauth-selector-pattern`)
+   - Create branch: `docs/learnings-<short-descriptor>` (e.g. `docs/learnings-oauth-selector-pattern`). Branch type `docs/` follows the kit's hard rule in root `CLAUDE.md` ("Branch naming")
    - Commit only the learning changes with a clear message: `docs(learnings): <short title>`
 
 5. **Push and open the PR:**
