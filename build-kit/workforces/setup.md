@@ -19,5 +19,5 @@
 ## Until Then
 
 - See `workforce-patterns.md` for the mental model and headline rules
-- See `playbooks/use-cases/multi-agent-orchestration.md` for orchestrator design philosophy
+- See `playbooks/multi-agent-orchestration.md` for orchestrator design philosophy
 - See `.claude/rules/PLATFORM_MECHANICS.md` § "Workforce Architecture"

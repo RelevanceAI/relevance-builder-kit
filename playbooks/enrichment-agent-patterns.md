@@ -153,6 +153,6 @@ See also: `.claude/rules/BUILD_PRACTICES.md` "Dead-End Status Clarity" section.
 
 ## Related Files
 
-- `playbooks/use-cases/research-agent-patterns.md` - Research patterns (often upstream of enrichment)
+- `playbooks/research-agent-patterns.md` - Research patterns (often upstream of enrichment)
 - `.claude/rules/BUILD_PRACTICES.md` - Dead-end status clarity, entity name matching
 - `build-kit/agents/knowledge/knowledge-tables.md` - Knowledge table API for storing enrichment results

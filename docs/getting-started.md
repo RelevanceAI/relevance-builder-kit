@@ -197,7 +197,7 @@ This loads the 12-point design rubric and the v0-to-vN roadmap. It walks you thr
 - **Skills** (`.claude/skills/`) -- detailed build patterns and guides
 - **Reference** (`build-kit/`) -- deep reference (knowledge tables, tool transformations, icon URLs)
 - **Rules** (`.claude/rules/`) -- governance: doc standards, build practices, platform mechanics
-- **Use-case playbooks** (`playbooks/use-cases/`) -- architecture playbooks for common agent types
+- **Use-case playbooks** (`playbooks/`) -- architecture playbooks for common agent types
 - **API Docs** -- https://relevanceai.com/docs (or your region-specific stack URL once authenticated)
 
 ## Troubleshooting

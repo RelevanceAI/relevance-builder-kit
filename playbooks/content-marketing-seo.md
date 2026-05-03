@@ -138,6 +138,6 @@ An 11-agent workforce. Keyword research and cluster planning feed into a one-to-
 
 ## Related Files
 
-- `playbooks/use-cases/creative-pipeline.md` -- related patterns for creative and generative content workflows
-- `playbooks/use-cases/multi-agent-orchestration.md` -- architecture patterns for the one-to-many dispatch used in cluster generation
+- `playbooks/creative-pipeline.md` -- related patterns for creative and generative content workflows
+- `playbooks/multi-agent-orchestration.md` -- architecture patterns for the one-to-many dispatch used in cluster generation
 - `build-kit/integrations/` -- Google Workspace integration guides

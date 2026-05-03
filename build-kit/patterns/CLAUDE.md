@@ -21,5 +21,5 @@ Come here when:
 - `build-kit/CLAUDE.md` -- build-kit hub
 - `build-kit/agents/` -- single-agent build patterns (prompt, tools, knowledge, triggers)
 - `build-kit/workforces/` -- multi-agent orchestration patterns
-- `playbooks/use-cases/` -- use-case playbooks
+- `playbooks/` -- use-case playbooks
 - `.claude/skills/agent-build-patterns/` -- design philosophy behind pattern decisions

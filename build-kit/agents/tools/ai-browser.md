@@ -284,7 +284,7 @@ When calling the Airtop screenshot API directly, params must be nested under `co
 
 ## See Also
 
-- `playbooks/use-cases/form-testing-patterns.md` -- Use-case playbook: Level 1-4 framework for automated form testing, per-form routing, dummy-data hygiene
+- `playbooks/form-testing-patterns.md` -- Use-case playbook: Level 1-4 framework for automated form testing, per-form routing, dummy-data hygiene
 - `platform-tool-gotchas.md` -- General platform tool gotchas
 - `tool-transformations.md` -- Other transformation step types
 - `.claude/rules/BUILD_PRACTICES.md` -- Tool building standards

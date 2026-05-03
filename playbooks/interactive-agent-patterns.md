@@ -89,6 +89,6 @@ The agent runs through the checklist internally before starting work. For intera
 
 ## Related Files
 
-- `playbooks/use-cases/outreach-agent-patterns.md` - Outreach-specific messaging patterns
-- `playbooks/use-cases/synthesis-agent-patterns.md` - Briefing output patterns
+- `playbooks/outreach-agent-patterns.md` - Outreach-specific messaging patterns
+- `playbooks/synthesis-agent-patterns.md` - Briefing output patterns
 - `.claude/rules/BUILD_PRACTICES.md` - General agent building practices

@@ -89,7 +89,7 @@ Graduate learnings directly to their canonical home. Don't accumulate in scratch
 | Single-agent pattern (prompt, tools, knowledge, triggers, phone) | `build-kit/agents/` (pick the right subfolder) |
 | Workforce / multi-agent pattern | `build-kit/workforces/` |
 | Documentation pattern, error-debugging | `build-kit/patterns/` |
-| Use-case playbook | `playbooks/use-cases/` |
+| Use-case playbook | `playbooks/` |
 | Tool transformation reference | `build-kit/agents/tools/` |
 | Knowledge table reference | `build-kit/agents/knowledge/` |
 | Eval, monitoring, or observability pattern | `build-kit/evals-and-monitoring/` |

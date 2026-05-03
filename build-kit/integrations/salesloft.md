@@ -268,5 +268,5 @@ Outcome: customer leaves the call with a working test cadence, a clear productio
 
 - `build-kit/integrations/salesforce.md` -- Salesforce (the most common upstream CRM)
 - `build-kit/integrations/outreach.md` -- Outreach.io (SalesLoft's main competitor; many patterns transfer)
-- `playbooks/use-cases/outreach-agent-patterns.md` -- Outbound messaging patterns (Outreach + SalesLoft both)
+- `playbooks/outreach-agent-patterns.md` -- Outbound messaging patterns (Outreach + SalesLoft both)
 - `.claude/rules/BUILD_PRACTICES.md` "Integrations" -- native > raw API > Pipedream rule, OAuth consistency

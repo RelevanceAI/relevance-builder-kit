@@ -6,7 +6,7 @@ Markdown templates for consistent documentation. Use the right template when add
 
 | Template | Use for | Target directory |
 |----------|---------|-----------------|
-| `use-case-playbook.template.md` | New agent use-case playbooks | `playbooks/use-cases/` |
+| `use-case-playbook.template.md` | New agent use-case playbooks | `playbooks/` |
 | `product-knowledge.template.md` | New product / domain knowledge content | Knowledge table or `builds/{build-name}/` |
 | `locale-guide.template.md` | New per-locale guideline | Knowledge table or `builds/{build-name}/` |
 | `builds-index.local.template.md` | Local builds index (gitignored) | `.local/builds.local.md` |

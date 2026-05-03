@@ -177,5 +177,5 @@ Use this as a first-pass routing decision. Encode the result in the registry's `
 
 - `build-kit/agents/tools/ai-browser.md` -- AI Browser / Airtop full technical reference (platform steps, Direct API, gotchas, limitations)
 - `build-kit/agents/tools/platform-tool-gotchas.md` -- General tool gotchas (Cloudflare TLS fingerprinting, JS vs Python sandbox auth)
-- `playbooks/use-cases/multi-agent-orchestration.md` -- Graduation path when the single-agent default outgrows itself
+- `playbooks/multi-agent-orchestration.md` -- Graduation path when the single-agent default outgrows itself
 - `.claude/rules/BUILD_PRACTICES.md` -- Unit of Action, audit patterns, state_mapping

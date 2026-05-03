@@ -82,6 +82,6 @@ ZoomInfo has a straightforward security story for customer conversations:
 
 ## Related Files
 
-- `playbooks/use-cases/enrichment-agent-patterns.md` -- Enrichment patterns (cost-aware, tool chains)
+- `playbooks/enrichment-agent-patterns.md` -- Enrichment patterns (cost-aware, tool chains)
 - `build-kit/integrations/salesforce.md` -- Salesforce (common upstream for enrichment triggers)
 - `build-kit/integrations/clay.md` -- Clay (alternative/complementary enrichment)

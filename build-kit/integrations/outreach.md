@@ -118,4 +118,4 @@ The customer must:
 
 - `build-kit/integrations/salesforce.md` -- Salesforce (common upstream CRM)
 - `build-kit/integrations/salesloft.md` -- SalesLoft (Outreach alternative)
-- `playbooks/use-cases/outreach-agent-patterns.md` -- Outreach messaging patterns
+- `playbooks/outreach-agent-patterns.md` -- Outreach messaging patterns

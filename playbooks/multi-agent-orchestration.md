@@ -449,7 +449,7 @@ What you do NOT need to change: the orchestrator's domain logic (it has none), t
 
 ## Related Files
 
-- `playbooks/use-cases/synthesis-agent-patterns.md` -- Synthesis patterns (CEO Elevator Test, So What rule)
+- `playbooks/synthesis-agent-patterns.md` -- Synthesis patterns (CEO Elevator Test, So What rule)
 - `.claude/skills/agent-build-patterns/build-philosophy.md` -- Separate Finding from Doing principle
 - `.claude/rules/BUILD_PRACTICES.md` "Workforce / Orchestrator Patterns" -- Batch vs fan-out rules, autopilot rules, micro-agent anti-pattern, dead-end status clarity
 - `.claude/rules/PLATFORM_MECHANICS.md` "Workforce Architecture" -- Graph vs tree model, edge types, threading, approval propagation, wall-clock limit, sequential reliability ceiling, Parallel Tool Calls compatibility rule
