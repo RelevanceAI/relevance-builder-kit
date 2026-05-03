@@ -63,7 +63,7 @@ This gives Claude a base recommendation plus conditional adaptation for differen
 
 ### Cross-Reference Precisely
 
-- Use exact file paths: `build-kit/phone-agents.md`, not "see the phone agent docs"
+- Use exact file paths: `build-kit/agents/phone/phone-agents.md`, not "see the phone agent docs"
 - Link to specific sections when referencing large files
 - Reference reusable components (tools, templates, schemas) instead of duplicating them
 
@@ -107,12 +107,18 @@ relevance-builder-kit/
   playbooks/                     # Use-case patterns
     use-cases/                   # Use-case playbooks (research, outreach, phone, etc.)
   build-kit/                     # Deep reference material
-    tools/                       # Tool API reference, gotchas, icons
+    agents/                      # Single-agent reference
+      prompt/                    # System prompt design, agent variables, placeholder tools
+      tools/                     # Tool transformations, state-mapping, gotchas, sandbox auth, voice, AI Browser
+      knowledge/                 # Knowledge tables (CRUD), CRM + locale knowledge architecture
+      triggers/                  # Schedule, webhook, form, chat, slack triggers
+      phone/                     # Phone agent best practices
+      agent-write-operations.md  # MCP write ops (patch / upsert / save-draft) cross-cutting
+    workforces/                  # Multi-agent orchestration: edges, setup, lifecycle
+    evals-and-monitoring/        # Test suites, evaluators, LLM-as-judge, tool simulation, analytics, observability
     integrations/                # Integration guides (HubSpot, Salesforce, etc.)
-    patterns/                    # Architecture patterns
+    patterns/                    # CLAUDE.md design principles + best practices, error-debugging
     templates/                   # Doc templates
-    phone-agents.md              # Phone agent best practices
-    evals-and-monitoring.md      # Evals, analytics, observability
   .claude/
     rules/                       # Governance + platform mechanics (auto-loaded)
       DOC_RULES.md               # This file

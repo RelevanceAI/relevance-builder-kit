@@ -52,7 +52,7 @@ Transformation: `linkedin_action`
 
 ### `_oneof_type_` is mandatory
 
-The `action` object MUST use the `_oneof_type_` discriminator pattern. The `type`/`provider_id` format (e.g., `"type": "SEND_MESSAGE", "provider_id": "LINKEDIN"`) is undocumented and will fail with `must NOT have additional properties` validation errors. See `build-kit/tools/tool-transformations.md` for all valid `_oneof_type_` values and required params.
+The `action` object MUST use the `_oneof_type_` discriminator pattern. The `type`/`provider_id` format (e.g., `"type": "SEND_MESSAGE", "provider_id": "LINKEDIN"`) is undocumented and will fail with `must NOT have additional properties` validation errors. See `build-kit/agents/tools/tool-transformations.md` for all valid `_oneof_type_` values and required params.
 
 ### Capabilities
 - Send messages, start new chats, send connection requests
@@ -375,4 +375,4 @@ Cross-cutting platform mechanics that affect any build, regardless of integratio
 - **`relevance_api_call` only supports GET / POST / PUT.** PATCH is rejected. Use JS `fetch` or Python `requests` for PATCH calls.
 - **Runtime `authorization` token is scoped.** The Python `authorization` keyword provides a runtime API key that may lack permissions for some endpoints (e.g. `/slide_show`). Use project secrets or user API keys for full access.
 
-For inter-step template-injection size limit, see `build-kit/tools/state-mapping.md`.
+For inter-step template-injection size limit, see `build-kit/agents/tools/state-mapping.md`.

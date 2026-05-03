@@ -318,7 +318,7 @@ When Slack "isn't working", check in this order -- most common failures first:
 
 Marketplace templates: https://marketplace.relevanceai.com/integrations/slack
 
-Tool icon URL: `https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg` (`build-kit/tools/tool-icon-urls.md`).
+Tool icon URL: `https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg` (`build-kit/agents/tools/tool-icon-urls.md`).
 
 ---
 

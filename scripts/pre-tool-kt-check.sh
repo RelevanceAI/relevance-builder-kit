@@ -4,7 +4,7 @@
 # Triggered by .claude/settings.json when relevance_upsert_tool is called.
 # Reads the tool call JSON on stdin and greps the transformations blob for
 # known KT transformation names. If any match, emits a reminder to stderr so
-# the context shows "Read build-kit/tools/knowledge-tables.md first" before
+# the context shows "Read build-kit/agents/knowledge/knowledge-tables.md first" before
 # the agent commits the tool.
 #
 # Never blocks. Just nudges. Exit 0 always.
@@ -22,7 +22,7 @@ Native knowledge-table transformation detected in this tool build.
 
 Before you ship this tool, confirm:
 
-  1. You have read `build-kit/tools/knowledge-tables.md` in this session.
+  1. You have read `build-kit/agents/knowledge/knowledge-tables.md` in this session.
      Specifically the "Filter Types Reference" section. It distinguishes
      Format A (raw API `filters`) vs Format B (native step `raw_filters`).
 

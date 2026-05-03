@@ -106,6 +106,6 @@ Transcript:
 
 ## Related Files
 
-- `build-kit/phone-agents.md` - Phone agent architecture (relevant if combining phone agents with meeting intelligence)
+- `build-kit/agents/phone/phone-agents.md` - Phone agent architecture (relevant if combining phone agents with meeting intelligence)
 - `.claude/skills/agent-build-patterns/unit-of-action.md` - Why capture, analysis, and action should be separate agents
-- `build-kit/tools/knowledge-tables.md` - Knowledge table API for storing transcripts and insights
+- `build-kit/agents/knowledge/knowledge-tables.md` - Knowledge table API for storing transcripts and insights

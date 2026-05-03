@@ -1,7 +1,7 @@
 # Platform Mechanics: Relevance AI
 
 > **Scope:** Long-term store of accumulated truths about building on Relevance AI. Platform mechanics, confirmed patterns, operational knowledge.
-> Deep references: `build-kit/tools/` (knowledge tables, state-mapping, transformations) and `build-kit/patterns/` (workforce, agent-write-operations, system-prompts, placeholder-tools, error-debugging).
+> Deep references: `build-kit/agents/` (prompts, tools, knowledge, triggers, phone, write operations), `build-kit/workforces/` (multi-agent orchestration), `build-kit/patterns/` (CLAUDE.md design, error-debugging).
 
 ---
 
@@ -28,7 +28,7 @@ Three MCP tools for updating agents, each with different safety characteristics:
 
 ### Phone Agent Runtime Config
 
-Phone agents store voice settings (`first_message_mode`, voice, transcriber, silence timeouts) in a `runtime` field. Some MCP write operations do not preserve this field. After a write to a phone agent, either verify in the UI or re-apply the full `runtime` via `relevance_patch_agent`. Full reference: `build-kit/phone-agents.md`.
+Phone agents store voice settings (`first_message_mode`, voice, transcriber, silence timeouts) in a `runtime` field. Some MCP write operations do not preserve this field. After a write to a phone agent, either verify in the UI or re-apply the full `runtime` via `relevance_patch_agent`. Full reference: `build-kit/agents/phone/phone-agents.md`.
 
 ### `patch_agent` and large system prompts
 
@@ -36,13 +36,13 @@ Phone agents store voice settings (`first_message_mode`, voice, transcriber, sil
 
 ### Full preferred-write-paths matrix + fetch-merge-save pattern
 
-See `build-kit/patterns/agent-write-operations.md`.
+See `build-kit/agents/agent-write-operations.md`.
 
 ---
 
 ## state_mapping is REQUIRED for Tools
 
-Every tool MUST have a `state_mapping` field. See `BUILD_PRACTICES.md` § "state_mapping and Inter-Step Data Flow" for the headline rules; full mechanism in `build-kit/tools/state-mapping.md`.
+Every tool MUST have a `state_mapping` field. See `BUILD_PRACTICES.md` § "state_mapping and Inter-Step Data Flow" for the headline rules; full mechanism in `build-kit/agents/tools/state-mapping.md`.
 
 ---
 
@@ -72,7 +72,7 @@ Reserves a tool slot in a system prompt without attaching the tool. Renders as a
 
 **Use for:** template / starter agents where future capabilities are telegraphed via Connect pills. **Avoid for:** marketplace publishing (validation rejects `"Agent prompt contains placeholder tools"`) or production agents with SLAs (mock echo).
 
-Full mechanics, UI integration, prompt-guidance pattern: `build-kit/patterns/placeholder-tools.md`.
+Full mechanics, UI integration, prompt-guidance pattern: `build-kit/agents/prompt/placeholder-tools.md`.
 
 ---
 
@@ -123,19 +123,19 @@ Use `"instructions"` for always-relevant context, `"tool"` for on-demand lookups
 
 Native KT transformation steps (`retrieve_data`, `update_knowledge_set_rows`, etc.) use `raw_filters` with a SIMPLE-DICT shape: `[{"data.<field>": "<value>"}]` -- NOT the verbose `/knowledge/list` shape. Wrong shape silently returns 0 matches with no error. Empty-string values match-on-empty (not "skip filter"); split into single-purpose tools or pre-build filters.
 
-Reference KBs in prompts: `{{_knowledge.product_catalog_4}}`. Full filter shapes, CRUD reference, Python helpers: `build-kit/tools/knowledge-tables.md`.
+Reference KBs in prompts: `{{_knowledge.product_catalog_4}}`. Full filter shapes, CRUD reference, Python helpers: `build-kit/agents/knowledge/knowledge-tables.md`.
 
 ---
 
 ## Params & Variables
 
-`params` holds static key-value config resolved via `{{key}}` in prompts and tool steps. Values can be strings, large reference docs, or structured arrays. For the full agent-variables design pattern (when to use `params` vs `params_schema`, Variables-tab rendering rules, `patch_agent` vs `save_agent_draft` semantics), see `build-kit/patterns/agent-variables.md`.
+`params` holds static key-value config resolved via `{{key}}` in prompts and tool steps. Values can be strings, large reference docs, or structured arrays. For the full agent-variables design pattern (when to use `params` vs `params_schema`, Variables-tab rendering rules, `patch_agent` vs `save_agent_draft` semantics), see `build-kit/agents/prompt/agent-variables.md`.
 
 ---
 
 ## Workforce Architecture
 
-Headline rules below. Mental model (graph not tree), type semantics (default vs chat), schedule capability, sub-agent approval propagation, wall-clock limits, full edge configuration: `build-kit/patterns/workforce-patterns.md`.
+Headline rules below. Mental model (graph not tree), type semantics (default vs chat), schedule capability, sub-agent approval propagation, wall-clock limits, full edge configuration: `build-kit/workforces/workforce-patterns.md`.
 
 ### Edge Types
 
@@ -147,14 +147,14 @@ Headline rules below. Mental model (graph not tree), type semantics (default vs 
 ### Critical edge rules
 
 - **`params_schema` is REQUIRED.** Empty schema causes `"must have required property 'message'"` on first call.
-- **Always `additionalProperties: true`** on a tool-call edge's `params_schema`. The runtime auto-injects `_subagent_params` before validation. A strict schema rejects it. LLM guardrails belong in `prompt_for_when_to_use`, NOT the schema. Full JSON example: `build-kit/patterns/workforce-patterns.md`.
+- **Always `additionalProperties: true`** on a tool-call edge's `params_schema`. The runtime auto-injects `_subagent_params` before validation. A strict schema rejects it. LLM guardrails belong in `prompt_for_when_to_use`, NOT the schema. Full JSON example: `build-kit/workforces/workforce-patterns.md`.
 - **`relevance_update_workforce` merges, does not replace.** Removing an edge field by omitting it does not work -- set it to the new value explicitly.
 - **Explicit `edges` disable auto-linking.** Forget the trigger edge (`source_index: -1`) and the workforce publishes but routes nothing.
 - **Test orchestrators via `relevance_trigger_workforce`, not `trigger_agent_sync`.** Workforce edges only populate the orchestrator's runtime tool list when triggered through the workforce. Direct agent-trigger shows `toolCalls: []` even when the orchestrator describes delegation.
 
 ### Parallel Tool Calls (Early Access)
 
-Concurrent tool / sub-agent execution behind a per-user feature flag. **Hard rule:** every parallel-dispatched edge MUST be `always-create-new`. `always-same` raises a race error. Full setup, threading-compatibility matrix, behaviour: `build-kit/patterns/parallel-tool-calls.md`.
+Concurrent tool / sub-agent execution behind a per-user feature flag. **Hard rule:** every parallel-dispatched edge MUST be `always-create-new`. `always-same` raises a race error. Full setup, threading-compatibility matrix, behaviour: `build-kit/agents/tools/parallel-tool-calls.md`.
 
 ---
 
@@ -178,9 +178,9 @@ Work backwards from symptoms to root causes. Don't fix the symptom layer; fix th
 
 All triggers (Schedule, Webhook, Form, Chat) are treated as incoming messages. Define the expected input schema the system prompt must handle.
 
-Cross-cutting platform limitations (`relevance_list_conversations` zero-results, no UUID -> name resolver, no step-level `condition`, `relevance_api_call` PATCH unsupported, scoped runtime auth): `build-kit/tools/platform-tool-gotchas.md` § "Platform-Wide Limitations".
+Cross-cutting platform limitations (`relevance_list_conversations` zero-results, no UUID -> name resolver, no step-level `condition`, `relevance_api_call` PATCH unsupported, scoped runtime auth): `build-kit/agents/tools/platform-tool-gotchas.md` § "Platform-Wide Limitations".
 
-Integration-specific notes (LinkedIn / Unipile, Microsoft Graph, Slack, Modal Labs, `prompt_completion` params, etc.): `build-kit/tools/tool-transformations.md` and `build-kit/tools/platform-tool-gotchas.md`.
+Integration-specific notes (LinkedIn / Unipile, Microsoft Graph, Slack, Modal Labs, `prompt_completion` params, etc.): `build-kit/agents/tools/tool-transformations.md` and `build-kit/agents/tools/platform-tool-gotchas.md`.
 
 ---
 
@@ -212,4 +212,4 @@ Python steps get a built-in `authorization` runtime global (`{project}:{key}:{re
 
 For tools fetching from sites with strict TLS fingerprinting, JS `fetch` is generally more reliable than Python `requests`.
 
-Full asymmetry table, header formats, guard pattern: `build-kit/tools/sandbox-auth.md`.
+Full asymmetry table, header formats, guard pattern: `build-kit/agents/tools/sandbox-auth.md`.

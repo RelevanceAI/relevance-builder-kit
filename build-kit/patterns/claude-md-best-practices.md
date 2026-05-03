@@ -175,7 +175,7 @@ After writing any CLAUDE.md, ask: "If CC read only this file, could it do its jo
 Always use exact file paths in references. Never relative descriptions.
 
 Bad: "see the tools reference"
-Good: "`build-kit/tools/platform-tool-gotchas.md`"
+Good: "`build-kit/agents/tools/platform-tool-gotchas.md`"
 
 Bad: "the knowledge base"
 Good: "`playbooks/use-cases/` -- 10 use-case playbooks"
@@ -222,8 +222,8 @@ vs.
 ```
 Come here when:
 - "How do I connect HubSpot?" -- build-kit/integrations/hubspot.md
-- "What's the right state_mapping for a multi-step tool?" -- build-kit/tools/state-mapping.md
-- "Can the agent process records in parallel?" -- build-kit/patterns/parallel-tool-calls.md
+- "What's the right state_mapping for a multi-step tool?" -- build-kit/agents/tools/state-mapping.md
+- "Can the agent process records in parallel?" -- build-kit/agents/tools/parallel-tool-calls.md
 ```
 
 Generic routing is useless. Specific query patterns are navigable.

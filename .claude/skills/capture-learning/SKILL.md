@@ -86,9 +86,13 @@ Graduate learnings directly to their canonical home. Don't accumulate in scratch
 | Documentation or repo convention | `.claude/rules/DOC_RULES.md` |
 | Agent design pattern | `.claude/skills/agent-build-patterns/` |
 | Integration workaround | `build-kit/integrations/` |
-| Reusable architecture pattern | `build-kit/patterns/` |
+| Single-agent pattern (prompt, tools, knowledge, triggers, phone) | `build-kit/agents/` (pick the right subfolder) |
+| Workforce / multi-agent pattern | `build-kit/workforces/` |
+| Documentation pattern, error-debugging | `build-kit/patterns/` |
 | Use-case playbook | `playbooks/use-cases/` |
-| Tool transformation reference | `build-kit/tools/` |
+| Tool transformation reference | `build-kit/agents/tools/` |
+| Knowledge table reference | `build-kit/agents/knowledge/` |
+| Eval, monitoring, or observability pattern | `build-kit/evals-and-monitoring/` |
 
 Also update:
 

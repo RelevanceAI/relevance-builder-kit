@@ -67,7 +67,7 @@ Orchestrator coordinates all three via forced-handover edges
 
 1. Define the single objective for the phone agent
 2. Build the pre-call agent with CRM lookup and context packaging
-3. Build the phone agent with voice-optimized prompt (see `build-kit/phone-agents.md` for prompt templates)
+3. Build the phone agent with voice-optimized prompt (see `build-kit/agents/phone/phone-agents.md` for prompt templates)
 4. Configure voice provider (Cartesia Sonic-3 default, speed 0.8-1.0)
 5. Configure STT (Deepgram Nova-3)
 6. Set up `summary_prompt` for structured post-call output
@@ -90,7 +90,7 @@ Orchestrator coordinates all three via forced-handover edges
 
 ## Example Prompts
 
-See `build-kit/phone-agents.md` for full prompt templates including:
+See `build-kit/agents/phone/phone-agents.md` for full prompt templates including:
 - Phone Call Experience Guidelines block
 - Text normalization rules
 - Conversation flow design (phase-based, not checklist)
@@ -98,5 +98,5 @@ See `build-kit/phone-agents.md` for full prompt templates including:
 
 ## Related Files
 
-- `build-kit/phone-agents.md` - Full implementation reference (voice config, prompt engineering, compliance, pitfalls). Read this when building.
+- `build-kit/agents/phone/phone-agents.md` - Full implementation reference (voice config, prompt engineering, compliance, pitfalls). Read this when building.
 - `.claude/skills/agent-build-patterns/unit-of-action.md` - Why one objective per agent matters

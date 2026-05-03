@@ -71,7 +71,7 @@ A 3-agent workforce where the entry agent generates locale-native content, then 
 
 - **Two-tool content generation (instruction builder + content generator).** The instruction builder outputs structured writing guidance (tone, formality, CTA style, vocabulary constraints). The content generator receives only these instructions plus the content brief. All the heavy lifting lives in the instruction layer. This makes it modular: changing the locale guideline changes the instructions, which changes the output, without touching the content generator.
 
-- **LQA framework with 8 evaluation dimensions.** The QA agent evaluates Accuracy, Fluency, Terminology, Style, Locale Conventions, Cultural Appropriateness, Design/Layout, and General Issues. Each issue gets a severity level (Critical/Major/Minor) and a structured report. This is not subjective review -- it is a repeatable, auditable evaluation framework. See `build-kit/patterns/locale-knowledge-architecture.md` for the full framework.
+- **LQA framework with 8 evaluation dimensions.** The QA agent evaluates Accuracy, Fluency, Terminology, Style, Locale Conventions, Cultural Appropriateness, Design/Layout, and General Issues. Each issue gets a severity level (Critical/Major/Minor) and a structured report. This is not subjective review -- it is a repeatable, auditable evaluation framework. See `build-kit/agents/knowledge/locale-knowledge-architecture.md` for the full framework.
 
 - **Cost model.** LLM-native content generation costs approximately $0.001/word at Haiku-tier pricing. A 3-agent workforce adds approximately 3x per message for QA and post-editing. At scale (100K words/month across 10 languages), total LLM spend is approximately $3,000/month -- an order of magnitude cheaper than human translation agencies.
 
@@ -92,7 +92,7 @@ A 3-agent workforce where the entry agent generates locale-native content, then 
 | Locale Guidelines | One row per locale with full guideline text | language_iso, region, guideline_content, last_verified |
 | Translation Memory (optional) | Previously approved source-target pairs for reuse | source_text, target_text, language_iso, content_type, date_approved |
 
-See `build-kit/patterns/locale-knowledge-architecture.md` for full schema design, loading strategy, and governance.
+See `build-kit/agents/knowledge/locale-knowledge-architecture.md` for full schema design, loading strategy, and governance.
 
 ## Implementation Checklist
 
@@ -217,9 +217,9 @@ All locale decisions are made here, not in the generator.
 
 ## Related Files
 
-- `build-kit/patterns/locale-knowledge-architecture.md` -- Glossary design, locale guideline structure, LQA evaluation framework, language region coverage
+- `build-kit/agents/knowledge/locale-knowledge-architecture.md` -- Glossary design, locale guideline structure, LQA evaluation framework, language region coverage
 - `build-kit/templates/locale-guide.template.md` -- Fill-in-the-blanks template for creating per-locale guidelines
 - `playbooks/use-cases/outreach-agent-patterns.md` -- Outbound messaging patterns that localization augments
 - `playbooks/use-cases/content-marketing-seo.md` -- Content pipeline patterns (localization can be added as a downstream stage)
 - `.claude/rules/BUILD_PRACTICES.md` -- Workforce patterns (batch vs fan-out, autopilot rules, dead-end status clarity)
-- `build-kit/tools/knowledge-tables.md` -- Knowledge table API reference for glossary and guideline tables
+- `build-kit/agents/knowledge/knowledge-tables.md` -- Knowledge table API reference for glossary and guideline tables

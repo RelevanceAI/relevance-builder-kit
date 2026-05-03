@@ -240,7 +240,7 @@ Four tools cover the entire CRM surface better than 20 domain-specific ones:
 
 ## Related Files
 
-- `build-kit/tools/knowledge-tables.md` -- Knowledge table API reference (CRUD, filters, Python helpers)
+- `build-kit/agents/knowledge/knowledge-tables.md` -- Knowledge table API reference (CRUD, filters, Python helpers)
 - `playbooks/use-cases/enrichment-agent-patterns.md` -- Enrichment patterns that interact with CRM data
 - `playbooks/use-cases/multi-agent-orchestration.md` -- Governance and permission design for multi-agent CRM systems
 - `.claude/rules/BUILD_PRACTICES.md` -- Entity name matching, dead-end status clarity

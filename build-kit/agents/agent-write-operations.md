@@ -47,7 +47,7 @@
 1. Verify phone config in the Relevance UI, or
 2. Re-apply the full `runtime` object via `relevance_patch_agent` with the complete `runtime` field included
 
-**Fix status:** Pending fix in the MCP plugin. See `build-kit/phone-agents.md` for full phone agent reference.
+**Fix status:** Pending fix in the MCP plugin. See `build-kit/agents/phone/phone-agents.md` for full phone agent reference.
 
 ---
 
@@ -84,7 +84,7 @@ await relevance_save_agent_draft({ agentId: "x", config: agent });
 
 ## See Also
 
-- `build-kit/phone-agents.md` -- full phone agent reference (runtime structure, voices, transcribers, hard-rule patterns)
-- `build-kit/patterns/agent-variables.md` -- `params_schema` + `params` pattern (forces `save_agent_draft` use)
+- `build-kit/agents/phone/phone-agents.md` -- full phone agent reference (runtime structure, voices, transcribers, hard-rule patterns)
+- `build-kit/agents/prompt/agent-variables.md` -- `params_schema` + `params` pattern (forces `save_agent_draft` use)
 - `.claude/rules/PLATFORM_MECHANICS.md` § "Agent Write Operations"
 - `.claude/rules/BUILD_PRACTICES.md` § "Agent Write Operations"
