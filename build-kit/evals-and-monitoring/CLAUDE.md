@@ -7,8 +7,9 @@ Platform evals (test sets, evaluators, LLM-as-judge, tool simulation), Analytics
 - `overview.md` -- Quick reference table, where each topic lives
 - `test-suites.md` -- Test sets, scenarios, running evals, build-type test depth, scenario templates
 - `evaluators.md` -- Evaluator scopes (test-set-specific vs global), creating evaluators, evaluator rule templates
-- `llm-as-judge.md` -- (Stub) Model selection, scoring tiers, hallucination evaluators, accuracy gates
-- `tool-simulation.md` -- (Stub) `tool_simulation_config`, per-step overrides, timeout/error injection, async callback simulation
+- `llm-as-judge.md` -- Rule type selection (`llm_judge` vs `string_contains` / `string_equals` / `tool_usage`), writing rules that pass/fail cleanly, model selection, cost control, anti-patterns
+- `tool-simulation.md` -- `tool_simulation_config` shape (agent vs workforce), config levels (test-set vs scenario vs batch precedence), per-call indexing, simulation_prompt design
+- `evaluating-workforces.md` -- What changes when `resource_type` flips from `agent` to `workforce`: `agent_configs` wrapping, cross-agent rules, test-suite design (cover handoffs), reading workforce-task results
 - `monitoring-and-analytics.md` -- Analytics dashboards, OpenTelemetry traces, audit logs, approval-mode monitoring, common production failure patterns
 
 ## Routing
