@@ -69,14 +69,15 @@ A starter agent should pass all 12 to ship. See `checklist.md` for the tactical 
 
 ## Build Flow
 
+The order matters. Output format constrains everything downstream — pick it first.
+
 ```
 1. Read any existing sandbox agent the user has
    -> understand their mental model
    -> do NOT fork; note what they're thinking
 
-2. Decide output type for v1
-   -> NOT list-order from the user's plan
-   -> which format shows the build's value best, needs least data, demos best?
+2. Decide output type for v1   <-- DO THIS FIRST. Format constrains tools, KB, prompt structure.
+   See "Output Format Decision Tree" below.
 
 3. Pick 3-5 tools, each mapped to one purpose
    -> drop LLM, thinking, paid-without-credits, redundant research
@@ -108,6 +109,79 @@ A starter agent should pass all 12 to ship. See `checklist.md` for the tactical 
    -> roadmap doc + checklist captured in builds/{build-name}/
    -> editability and smoke tests both passed
 ```
+
+### Output Format Decision Tree (Step 2)
+
+Get this wrong and the rest of the build compensates for it. Walk it before picking tools.
+
+```
+Who consumes the agent's output?
+  │
+  ├─ A human who copies / pastes / publishes it
+  │    (writer, editor, sales rep, content manager)
+  │    │
+  │    └─ Markdown. Clean fenced sections. Sources block at the end.
+  │       NO JSON envelope. NO {draft, citations, flags} wrapper.
+  │       (See anti-pattern: json-envelope-wrapping-prose)
+  │
+  ├─ A downstream tool / agent / system that parses it
+  │    (CRM update, next agent in workforce, automation step)
+  │    │
+  │    └─ Structured JSON with a defined schema. No prose. No mixed content.
+  │
+  ├─ Both ("the human reviews then it goes to a tool")
+  │    │
+  │    └─ This is a workforce, not one agent. The first agent produces clean
+  │       markdown for review; the second consumes the approved version into
+  │       structured data. Don't try to satisfy both consumers in one output.
+  │
+  └─ Don't know yet
+       │
+       └─ Pick markdown. Easier to add a structured-output downstream agent
+          later than to extract a usable doc from a JSON envelope nobody loves.
+```
+
+**Pick before tool selection.** A markdown-output agent often needs Google Search + Extract Text + a knowledge-table read. A JSON-output agent often needs different tools (CRM lookup, structured enrichment) — and a much shorter prompt because there's no prose-style writing to constrain.
+
+**Pick before data architecture.** Reference examples in a markdown agent live in a knowledge table the agent reads to anchor voice. Reference examples in a JSON agent live in a knowledge table the agent reads to anchor schema choices. Different tables, different rows, different prompt sections.
+
+**If a stakeholder lists 4 output types** (emails, one-pagers, talking points, pitch outlines), pick the one that demos the build's value best — usually the longest-form, most-skeptical-stakeholder-friendly artefact. See anti-pattern `list-order-as-priority`.
+
+### Placeholder Tool Verification (Step 6)
+
+When you've used `{{_placeholder.TOOL <name>}}` in the prompt to reserve roadmap slots (rubric point 10), verify they're working as expected before you ship.
+
+```
+1. Open the agent in the platform UI
+   → URL: https://app.relevanceai.com/agents/{region}/{project}/{agentId}/edit
+
+2. In the system prompt editor, find each {{_placeholder.TOOL <name>}}
+   → It should render as a "Connect" pill (greyed-out tool slot with the name visible)
+   → If it renders as raw text, check the syntax: exactly two curly braces,
+     one underscore, "TOOL" in caps, single space before the name
+   → Common typo: {{_placeholder.tool <name>}} (lowercase "tool") renders as text
+
+3. In the agent config drawer, scan tools list
+   → Real attached tools show as connected with their action ID
+   → Placeholders should NOT appear in the tools list — they're prompt-only
+     reservations until a real tool is connected
+
+4. Run a smoke test brief that does NOT trigger the placeholder capability
+   → Use relevance_trigger_agent + relevance_get_agent_task_summary
+   → Verify: agent does NOT call the placeholder. The mock-echo response
+     would surface as a tool call with empty / echo'd content
+   → If the agent calls the placeholder anyway, your prompt's "When to use"
+     guidance for that tool is too eager. Tighten the conditions.
+
+5. (Optional) Run a brief that WOULD trigger the placeholder
+   → The mock-echo phantom tool returns a placeholder response
+   → Confirm: agent receives the response and continues gracefully (or stops
+     with a clear "this capability isn't connected yet" message, depending
+     on how the prompt handles it)
+   → This is your "before connecting the real tool" baseline behaviour
+```
+
+Avoid placeholders entirely if the agent is going to the marketplace — validation rejects `"Agent prompt contains placeholder tools"`. See `build-kit/agents/prompt/placeholder-tools.md` for full mechanics.
 
 ## Files in this skill
 

@@ -41,6 +41,30 @@
 ## Test
 
 - [ ] **11. Editability test run:** change a variable (e.g. tone of voice) and confirm output shifts accordingly
+
+  **Worked example.** Open the agent's config drawer in the platform UI, find the `tone_of_voice` variable (or whatever your stable-content variable is named), and change its `default` value to something deliberately different. Re-run the same brief. The output must visibly shift.
+
+  ```
+  Variable: tone_of_voice
+  Before: "Professional, concise, B2B SaaS — no jargon, no hype."
+  After:  "Casual, pub-chat, lightly self-deprecating, contractions OK."
+
+  Same brief: "Write a 200-word LinkedIn post announcing our Q2 product launch."
+
+  ✅ PASS:
+    Output 1 opens "We're excited to announce..." — clean, polished, B2B.
+    Output 2 opens "Right, so we've finally shipped the thing..." — informal,
+    contractions, voice clearly different.
+
+  ❌ FAIL:
+    Both outputs sound identical.
+    → Variable isn't actually being read by the prompt. Check the prompt
+      references `{{tone_of_voice}}` (not just describes tone in fixed prose),
+      and check `params_schema` declares the variable with `is_fixed_param: true`
+      and a `default`.
+  ```
+
+  Reset the variable to its original value once the test passes. Document the test result in `builds/{build-name}/agent.md`.
 - [ ] **12. Async smoke test passed:**
   - [ ] Used `relevance_trigger_agent` (async) + `relevance_get_agent_task_summary`. NOT `trigger_agent_sync`
   - [ ] Output matches the expected format (markdown fenced, Sources section, etc.)

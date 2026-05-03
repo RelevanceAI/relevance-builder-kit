@@ -2,6 +2,29 @@
 
 > The reference library. Each anti-pattern has: signal (how you spot it), why it's bad, and what to do instead.
 
+## Anti-Pattern → Rubric Point Map
+
+If a starter agent fails a rubric point, scan the anti-patterns linked here first — most failures are one of these.
+
+| Anti-pattern                              | Violates rubric point(s)                                       |
+|-------------------------------------------|----------------------------------------------------------------|
+| `forked-from-marketplace`                 | 1 (Built fresh)                                                |
+| `json-envelope-wrapping-prose`            | 4 (Output format matches consumer)                             |
+| `in-scope-out-of-scope-meta-framing`      | 3 (Role-first framing), 6 (Length discipline)                  |
+| `actions-ID-injection-noise`              | 5 (Tool references natural language)                           |
+| `tool-hoarding`                           | 7 (3-5 tools, each with clear purpose)                         |
+| `thinking-tool-enabled`                   | 8 (No default-added tools that don't earn their place)         |
+| `llm-tool-included-just-in-case`          | 8                                                              |
+| `paid-tool-without-credits`               | 8                                                              |
+| `redundant-research-tools`                | 7, 8                                                           |
+| `list-order-as-priority`                  | 4 (Output format matches consumer — wrong output for v1)       |
+| `cant-be-edited-without-the-builder`      | 11 (Editability test), 2 (Architecture layers)                 |
+| `reference-examples-as-variables`         | 2 (Architecture layers — wrong layer for scaling content)      |
+| `trigger-agent-sync-for-smoke-test`       | 12 (Smoke test via async pattern)                              |
+| `roadmap-as-feature-list`                 | 9 (v0 -> vN journey, one constraint per version)               |
+
+Rubric points 1-12 are listed in `SKILL.md` § "12-Point Design Rubric". The checklist version lives in `checklist.md`.
+
 ---
 
 ## `forked-from-marketplace`
