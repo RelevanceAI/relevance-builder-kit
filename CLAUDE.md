@@ -40,6 +40,7 @@ These mental models shape how you build.
 
 - **Branch naming:** `{type}/{topic}` -- types: `feat/`, `fix/`, `docs/`
 - **Never use em dashes** in any agent config, system prompt, or repo content. Use commas, full stops, parentheses, or `--` instead.
+- **Agent avatars:** always set the `emoji` field to a Relevance CDN SVG URL, not a unicode emoji. Pattern + range in `.claude/rules/BUILD_PRACTICES.md` § Avatars. Enforced at deploy time by `scripts/pre-tool-system-prompt-check.sh`.
 - **Agent writes:** prefer `relevance_patch_agent` > `relevance_upsert_agent` > `relevance_save_agent_draft`. Details in `.claude/rules/PLATFORM_MECHANICS.md`
 
 ## Where to Go
