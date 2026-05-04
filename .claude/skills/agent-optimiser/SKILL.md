@@ -1,6 +1,6 @@
 ---
 name: agent-optimiser
-description: Analyze a Relevance AI agent or workforce for config, prompt, tool, and credit issues, then recommend ranked optimizations. Uses only native MCP tools -- works on any connected project.
+description: Diagnose a Relevance AI agent or workforce for config, prompt, tool, and credit-spend issues, then recommend ranked optimizations with concrete prompt rewrites and credit-saving estimates. Use when the user says "optimise this agent", "audit this workforce", "review this agent's prompt", "find waste in this build", "why is my agent slow / expensive / unreliable?", "the agent is using too many credits", or asks for a health check on an existing build. Reads platform state via native MCP tools (no writes without permission); works on any connected project.
 ---
 
 # Agent Optimiser

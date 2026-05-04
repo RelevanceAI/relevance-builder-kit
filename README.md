@@ -96,18 +96,33 @@ A few examples of how auto-invocation feels in practice:
 | "Capture this learning into the kit" | `/improve` |
 | "Let's do a retro on this build" | `/capture-learning` |
 
-Curated highlights:
+Curated highlights, grouped by where they fit in the build lifecycle.
+
+**Build lifecycle**
 
 | Skill | Purpose |
 |-------|---------|
+| `bash setup.sh` | First-time kit setup script: folder naming, `.mcp.json`, statusline walk-through, build folder scaffold (run from terminal, not a slash command) |
 | `/agent-build-patterns` | Design philosophy, Unit of Action, system design patterns, architecture decision guides |
+| `/template-agent` | Design and build a starter agent: 12-point design rubric, layered architecture, build-fresh principles |
 | `/eval` | Auto-generate test cases, run platform evals, golden sets, gate criteria, and performance monitoring |
 | `/agent-optimiser` | Audit any agent or workforce for config, prompt, tool, and credit issues. Returns ranked optimizations |
-| `/template-agent` | Design and build a starter agent: 12-point design rubric, layered architecture, build-fresh principles |
 | `/document-workforce` | Document a workforce and all its agents from the platform into local markdown |
+
+**Knowledge and compounding**
+
+| Skill | Purpose |
+|-------|---------|
 | `/improve` | Capture a single mid-flow insight as a well-scoped PR. Substance-strict bar, refuses ~half its invocations |
 | `/capture-learning` | End-of-session retro: extract reusable learnings, update knowledge base or open a PR |
-| `bash setup.sh` | First-time kit setup script: folder naming, `.mcp.json`, statusline walk-through, build folder scaffold (run from terminal, not a slash command) |
+
+### The "Improvement spotted" surface
+
+The kit's `IMPROVEMENT_WATCH.md` rule tells Claude to watch for kit-worthy insights mid-flow and surface them as a single line at the end of an assistant turn:
+
+> Improvement spotted: <one-line description>. Say `go` to capture and PR.
+
+When you see that line, replying `go` (or `go ahead`, `do it`, `yes go`) fires `/improve` against the candidate, runs the substance-strict bar, and opens a PR if it passes. Suggestions also persist to `.local/session-improvements.local.md` so a later session can pick up unfinished captures. Suppressed if you're mid-flow on a focused build or you've said "keep it simple". This is how single-shot insights become PRs without you breaking flow.
 
 There are more skills in `.claude/skills/`. Browse them, and **add your own** when you spot a workflow worth automating: see [Contributing](#contributing) below.
 
