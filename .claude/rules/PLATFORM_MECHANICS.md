@@ -34,6 +34,15 @@ Phone agents store voice settings (`first_message_mode`, voice, transcriber, sil
 
 `relevance_patch_agent` handles 30K+ char payloads correctly. Apparent "truncation" happens when callers pass `{{FILE:path}}` placeholders -- MCP tools do not resolve those. Always read the file and pass the resolved string.
 
+### `autonomy_limit_behaviour` accepted values
+
+Only two values are accepted: `"ask-for-approval"` (pause and prompt the user when the limit hits) and `"terminate-conversation"` (hard stop). Intuitive guesses like `"stop"`, `"halt"`, or `"pause"` fail with `must be equal to one of the allowed values {"allowedValues":["ask-for-approval","terminate-conversation"]}` mid-deploy. Pick by use case:
+
+- **`ask-for-approval`** -- interactive agents where a human can answer; the platform inserts an approval step.
+- **`terminate-conversation`** -- unattended pipelines (scheduled, webhook, cost-sensitive) where there is no human to answer; the agent stops cleanly with the partial result.
+
+Phone agents must use `terminate-conversation` because there is no synchronous channel for human approval mid-call (see `build-kit/agents/phone/phone-agents.md`).
+
 ### Full preferred-write-paths matrix + fetch-merge-save pattern
 
 See `build-kit/agents/agent-write-operations.md`.
