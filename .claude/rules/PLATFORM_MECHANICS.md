@@ -87,7 +87,7 @@ Use `relevance_attach_tools_to_agent` -- handles fetch, merge, save, publish, ac
 | Prefix | Purpose |
 |--------|---------|
 | `secrets.*` | Project secrets. **Tool-referenced names must start with `chains_`** (e.g. `{{secrets.chains_my_key}}`). Backend rejects others with *"Secrets referenced in tool must start with 'chains_'"*. Missing secret resolves to literal `"undefined"` -> silent 401 |
-| `snippets.*` | Project content templates. **Create via UI only** (`/snippets/*` API blocked in `relevance_api_request` allowlist). Resolver substitutes wherever `{{snippets.<name>}}` appears, including blockquotes / commentary. Non-existent refs resolve to empty strings |
+| `snippets.*` | Project content templates. **Create via UI only** (`/snippets/*` API blocked in `relevance_api_request` allowlist). Resolver substitutes wherever `{{snippets.<name>}}` appears, including blockquotes / commentary. **Non-existent refs resolve to literal `"undefined"`** (the 9-character string), NOT empty string. Same JS coercion footgun as missing secrets (`String(undefined)` -> `"undefined"`). A check like `if (!snippet) { ... }` will mis-detect a missing snippet as set; guard with `if (!snippet \|\| snippet === 'undefined') { ... }` or check the explicit string |
 | `_knowledge.*` | Knowledge set content |
 | `_workforce_node.*` | Workforce system |
 | `_mcp.*` | MCP integration |
