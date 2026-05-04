@@ -1,6 +1,6 @@
 ---
 name: eval
-description: Auto-generate eval test cases, run platform evals, golden set methodology, gate criteria, and performance monitoring
+description: Auto-generate test cases and run platform evals on a Relevance AI agent. Covers golden sets, quick smoke tests, publish gates, and ongoing performance monitoring of production conversations. Use when the user says "test this agent", "evaluate this agent", "set up evals", "run an eval", "create test cases", "set a publish gate", "add a golden set", "monitor production quality", or asks how to validate before going live. Quick mode (3 cases, auto-fix loop) for after-change smoke tests; Full mode (5-8 cases, user-reviewed) before launch or major redesign.
 ---
 
 ## When to Use
