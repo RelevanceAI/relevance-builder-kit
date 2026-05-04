@@ -1,6 +1,6 @@
 # Evaluating Workforces
 
-How evaluating a workforce differs from evaluating a single agent. Same MCP tools, different surface area. Read `test-suites.md`, `evaluators.md`, and `llm-as-judge.md` for the shared mechanics — this file covers only what changes when `resource_type` flips from `agent` to `workforce`.
+How evaluating a workforce differs from evaluating a single agent. Same MCP tools, different surface area. Read `test-suites.md`, `evaluators.md`, and `llm-as-judge.md` for the shared mechanics -- this file covers only what changes when `resource_type` flips from `agent` to `workforce`.
 
 For the broader build-time decision (single agent vs workforce in the first place), see `build-kit/workforces/agent-vs-workforce.md`.
 
@@ -13,7 +13,7 @@ Everything in this list works identically for agents and workforces:
 - Test set / test case structure (`relevance_create_eval_test_set`, `relevance_create_eval_test_case`)
 - Scenario shape (`prompt`, `max_turns`, `runs_per_scenario`, fixed first-message via `\n\nStart by saying: ...`)
 - Evaluator rule types (`llm_judge`, `string_contains`, `string_equals`, `tool_usage`)
-- Test-set-specific vs global scoping (with one nuance — see "Global evaluators" below)
+- Test-set-specific vs global scoping (with one nuance -- see "Global evaluators" below)
 - Run / batch / poll workflow (`relevance_run_evaluation`, `relevance_get_eval_batch_summary`, `relevance_list_eval_runs`)
 - Patch semantics on test-set / test-case updates
 - Dedicated rule-management tools (`add_eval_test_case_rule`, `update_eval_test_case_rule`, `remove_eval_test_case_rule`)
@@ -84,17 +84,17 @@ tool_simulation_config: {
 Two important rules:
 
 1. **Same agent appearing at multiple workforce nodes shares one simulation config.** You cannot mock its tools differently for "the orchestrator's call" vs "the worker's recursive call". If you need different mocks, duplicate the agent.
-2. **Test-set-level simulation uses the agent-style flat `tool_configs`** — applies uniformly across every agent in the workforce. For per-agent control, use scenario-level `agent_configs`.
+2. **Test-set-level simulation uses the agent-style flat `tool_configs`** -- applies uniformly across every agent in the workforce. For per-agent control, use scenario-level `agent_configs`.
 
 Full mechanics in `tool-simulation.md`.
 
 ### `tool_id` is the agent's action ID, not the workforce-edge ID
 
-For `tool_usage` rules and tool simulation, `tool_id` is the `{{_actions.<id>}}` ID on whichever agent runs the tool — not the workforce edge ID, not the studio ID. Get it via `relevance_get_agent_tools({ agentId })` for the relevant agent in the workforce, not from the workforce graph.
+For `tool_usage` rules and tool simulation, `tool_id` is the `{{_actions.<id>}}` ID on whichever agent runs the tool -- not the workforce edge ID, not the studio ID. Get it via `relevance_get_agent_tools({ agentId })` for the relevant agent in the workforce, not from the workforce graph.
 
 ### Evaluator rules see the whole task
 
-Rules can reference behaviour from any agent in the workforce. The judge sees the entire workforce-task transcript — every agent's messages, every tool call, every handover. Two consequences:
+Rules can reference behaviour from any agent in the workforce. The judge sees the entire workforce-task transcript -- every agent's messages, every tool call, every handover. Two consequences:
 
 - **Cross-agent rules are easy to write.** "The research agent searches before the writer agent publishes" is a single rule, naturally expressed.
 - **Rule prompts must be specific about which agent does what.** Vague rules like "the agent uses the right tool" don't tell the judge which of the workforce's three agents you mean. Name the agent explicitly: "The research agent calls the web search tool before any other agent runs."
@@ -143,7 +143,7 @@ Two additions for workforces:
 | Out-of-scope input                    | Workforce rejects work that's not its job              | `llm_judge` on scope guardrail                                                     |
 | (Optional) Approval-gated step        | `always-ask` edge surfaces approval, doesn't auto-run | Workforce reaches `pending-approval` state                                         |
 
-That's ~5-15 rules across 4-6 scenarios. Don't go bigger unless you have a specific reason — workforce evals are credit-heavy.
+That's ~5-15 rules across 4-6 scenarios. Don't go bigger unless you have a specific reason -- workforce evals are credit-heavy.
 
 ### Single-input vs multi-turn
 
@@ -159,12 +159,12 @@ Most workforces evaluated as automation (lead pipelines, content pipelines, post
 
 Same flow as agents:
 
-1. `relevance_get_eval_batch_summary({ eval_batch_id })` — overall scores, run-by-run pass/fail, `summary_score` (0-1)
-2. `relevance_list_eval_runs({ eval_batch_id })` — each run's `result.rule_results[]`
+1. `relevance_get_eval_batch_summary({ eval_batch_id })` -- overall scores, run-by-run pass/fail, `summary_score` (0-1)
+2. `relevance_list_eval_runs({ eval_batch_id })` -- each run's `result.rule_results[]`
 
 For a failed workforce-task in an eval run, you can also pull the actual workforce-task ID from the run result and use `relevance_get_workforce_task_messages({ workforceId, taskId })` to inspect the transcript directly. This is how you debug "why did the rule fail?" beyond the judge's stated `reason`.
 
-If a rule is failing intermittently across runs, set `runs_per_scenario: 3-5` to surface the flakiness — usually a sign the rule prompt needs sharpening or the workforce has nondeterministic handoffs.
+If a rule is failing intermittently across runs, set `runs_per_scenario: 3-5` to surface the flakiness -- usually a sign the rule prompt needs sharpening or the workforce has nondeterministic handoffs.
 
 ---
 
@@ -190,9 +190,9 @@ For workforces, the most common cause is putting `tool_configs` at the top level
 Workforce evals are slow when the workforce itself is slow. Two levers:
 
 1. Lower `max_turns` to 1 if the workforce isn't chat-style.
-2. Aggressively simulate external integrations — every real API call is wall-clock cost.
+2. Aggressively simulate external integrations -- every real API call is wall-clock cost.
 
-### "Same agent at two nodes — can I simulate them differently?"
+### "Same agent at two nodes -- can I simulate them differently?"
 
 No. The platform shares simulation config across all instances of the same agent in a workforce graph. If the two nodes need different mocks, duplicate the agent into a separate agent ID and use that at the second node.
 

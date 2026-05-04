@@ -4,7 +4,7 @@
 
 ## Anti-Pattern → Rubric Point Map
 
-If a starter agent fails a rubric point, scan the anti-patterns linked here first — most failures are one of these.
+If a starter agent fails a rubric point, scan the anti-patterns linked here first -- most failures are one of these.
 
 | Anti-pattern                              | Violates rubric point(s)                                       |
 |-------------------------------------------|----------------------------------------------------------------|
@@ -17,9 +17,9 @@ If a starter agent fails a rubric point, scan the anti-patterns linked here firs
 | `llm-tool-included-just-in-case`          | 8                                                              |
 | `paid-tool-without-credits`               | 8                                                              |
 | `redundant-research-tools`                | 7, 8                                                           |
-| `list-order-as-priority`                  | 4 (Output format matches consumer — wrong output for v1)       |
+| `list-order-as-priority`                  | 4 (Output format matches consumer -- wrong output for v1)       |
 | `cant-be-edited-without-the-builder`      | 11 (Editability test), 2 (Architecture layers)                 |
-| `reference-examples-as-variables`         | 2 (Architecture layers — wrong layer for scaling content)      |
+| `reference-examples-as-variables`         | 2 (Architecture layers -- wrong layer for scaling content)      |
 | `trigger-agent-sync-for-smoke-test`       | 12 (Smoke test via async pattern)                              |
 | `roadmap-as-feature-list`                 | 9 (v0 -> vN journey, one constraint per version)               |
 

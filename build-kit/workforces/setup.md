@@ -59,7 +59,7 @@ relevance_create_workforce({
 })
 ```
 
-When you specify only `agents`, the platform auto-links them as a linear `forced-handover` + `always-same` chain with a trigger node. Once you specify explicit `edges`, you own the entire graph — including the trigger edge.
+When you specify only `agents`, the platform auto-links them as a linear `forced-handover` + `always-same` chain with a trigger node. Once you specify explicit `edges`, you own the entire graph -- including the trigger edge.
 
 ### Step 3: Configure (when default linear chain isn't enough)
 
@@ -194,7 +194,7 @@ Trigger → Triage → Condition → Path A (if true)
 
 ### Multi-layer (orchestrator-of-orchestrators)
 
-Workforces can call workforces (one workforce attaches another's entry-point agent as a tool-call target). Use sparingly — debugging surface multiplies. Typically only justified when the inner workforce is a reusable capability.
+Workforces can call workforces (one workforce attaches another's entry-point agent as a tool-call target). Use sparingly -- debugging surface multiplies. Typically only justified when the inner workforce is a reusable capability.
 
 ### Knowledge-table intermediary
 
@@ -208,11 +208,11 @@ When the data passed between agents is large or structured, write it to a knowle
 
 Most common causes:
 
-1. An agent is waiting for approval (`action_behaviour: "always-ask"`). Check `exec.pending_approvals` — if non-empty, that's it.
+1. An agent is waiting for approval (`action_behaviour: "always-ask"`). Check `exec.pending_approvals` -- if non-empty, that's it.
 2. An agent hit its `autonomy_limit`. Check the agent run's `task_details.finished_state`.
 3. A tool execution is genuinely slow (long-running scrape, slow API).
 
-`exec.results.filter(r => r.content.type === "workforce-agent-run")` and inspect each `task_details.finished_state` — anything that isn't `completed` is the blocker.
+`exec.results.filter(r => r.content.type === "workforce-agent-run")` and inspect each `task_details.finished_state` -- anything that isn't `completed` is the blocker.
 
 ### "Agent isn't receiving context from the previous agent"
 
@@ -226,7 +226,7 @@ If `always-create-new` is intentional, fix it the other way: instruct the upstre
 
 ### "Orchestrator can't find a sub-agent's URL / file path / output"
 
-`always-create-new` is a one-way mirror — the orchestrator only sees the sub-agent's response text. Re-querying the sub-agent starts a fresh thread with no memory.
+`always-create-new` is a one-way mirror -- the orchestrator only sees the sub-agent's response text. Re-querying the sub-agent starts a fresh thread with no memory.
 
 Fix: add to the sub-agent's system prompt:
 
@@ -269,7 +269,7 @@ Verify the graph in the UI or print `nodes` and `edges` from `relevance_get_work
 | List tasks for the workforce  | `relevance_list_workforce_tasks`     |
 | Pull a single task's metadata | `relevance_get_workforce_task_metadata` |
 
-There's no "kill task" MCP operation today — workforces self-terminate at the dispatch / wall-clock limit, on `escalated` / `errored` states, or on completion.
+There's no "kill task" MCP operation today -- workforces self-terminate at the dispatch / wall-clock limit, on `escalated` / `errored` states, or on completion.
 
 ---
 

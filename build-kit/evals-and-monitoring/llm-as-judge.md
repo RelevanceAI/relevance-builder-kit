@@ -1,6 +1,6 @@
 # LLM as Judge
 
-Most evaluator rules are scored by an LLM judge — natural-language criteria evaluated by a smaller, fast model after the test run completes. Two things make or break this: rule design and rule type selection.
+Most evaluator rules are scored by an LLM judge -- natural-language criteria evaluated by a smaller, fast model after the test run completes. Two things make or break this: rule design and rule type selection.
 
 For test set / scenario design, see `test-suites.md`. For evaluator scopes (test-set-specific vs global), see `evaluators.md`. For simulating tool outputs inside scenarios, see `tool-simulation.md`.
 
@@ -27,7 +27,7 @@ The platform supports four evaluator rule types. Use the cheapest one that's det
   rule_config: { type: "string_equals", value: "Order confirmed." } }
 ```
 
-Case-sensitive. `string_equals` matches the agent's final response exactly — surprisingly brittle in practice (extra whitespace, trailing punctuation). Default to `string_contains` for keyword checks.
+Case-sensitive. `string_equals` matches the agent's final response exactly -- surprisingly brittle in practice (extra whitespace, trailing punctuation). Default to `string_contains` for keyword checks.
 
 ### `tool_usage`
 
@@ -44,7 +44,7 @@ Case-sensitive. `string_equals` matches the agent's final response exactly — s
 }
 ```
 
-Use this to verify routing and tool selection. Especially useful for negative checks — "must NOT call SendEmail" with `operator: "exactly", count: 0`.
+Use this to verify routing and tool selection. Especially useful for negative checks -- "must NOT call SendEmail" with `operator: "exactly", count: 0`.
 
 ### `llm_judge`
 
@@ -65,7 +65,7 @@ Default model is small and fast (`openai-gpt-4o-mini`). Override with `model` fo
 
 ## Writing Rules That Pass / Fail Cleanly
 
-The LLM judge sees the rule prompt and the agent's full conversation. It returns a binary `passed` and a `reason`. Vague prompts produce flaky results — the same conversation passes one run and fails the next.
+The LLM judge sees the rule prompt and the agent's full conversation. It returns a binary `passed` and a `reason`. Vague prompts produce flaky results -- the same conversation passes one run and fails the next.
 
 ### Good rules name a specific, observable behaviour
 
@@ -78,9 +78,9 @@ The LLM judge sees the rule prompt and the agent's full conversation. It returns
 ```
 
 These pass three tests:
-1. **Specific** — names a concrete behaviour, not "is helpful"
-2. **Observable** — can be verified from the conversation transcript alone
-3. **Binary-decidable** — there's a clear yes/no, not a spectrum
+1. **Specific** -- names a concrete behaviour, not "is helpful"
+2. **Observable** -- can be verified from the conversation transcript alone
+3. **Binary-decidable** -- there's a clear yes/no, not a spectrum
 
 ### Bad rules are vague, subjective, or unobservable
 
@@ -113,7 +113,7 @@ A single rule with three criteria is harder to debug than three rules with one c
 ✅ Three rules:
   - "Agent calls the CRM lookup tool"  (tool_usage)
   - "Final email mentions the company by name"  (llm_judge)
-  - "Final email is personalised — references at least one specific fact about the contact"  (llm_judge)
+  - "Final email is personalised -- references at least one specific fact about the contact"  (llm_judge)
 ```
 
 When the test fails, you see which criterion broke.
@@ -175,7 +175,7 @@ Strategies:
 - **Use deterministic rule types where possible.** `tool_usage` and `string_contains` add zero LLM cost.
 - **Lower `max_turns`.** If the agent's job needs 1 turn, set `max_turns: 1`. Don't pay for 10 turns of simulated chitchat.
 - **Run small smoke suites during dev, full suites on milestone changes.**
-- **Combine related checks into one scenario.** Five scenarios checking five things is more expensive than one scenario with five rules — same coverage, fifth the simulator cost.
+- **Combine related checks into one scenario.** Five scenarios checking five things is more expensive than one scenario with five rules -- same coverage, fifth the simulator cost.
 - **Watch out for `runs_per_scenario`.** Setting this to 5 for variance testing 5x's the cost.
 
 ---
@@ -207,7 +207,7 @@ If a tool's only step is `prompt_completion`, that reasoning belongs in the agen
 
 ### Don't rely on a single eval run
 
-LLM judges have variance. For rules that matter, set `runs_per_scenario: 3-5` to catch flaky behaviour. Watch for rules that pass 3/5 — that's a sign the rule prompt is too vague.
+LLM judges have variance. For rules that matter, set `runs_per_scenario: 3-5` to catch flaky behaviour. Watch for rules that pass 3/5 -- that's a sign the rule prompt is too vague.
 
 ---
 
