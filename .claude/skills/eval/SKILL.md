@@ -368,7 +368,13 @@ Present a structured report:
 
 ### Auto-Fix Loop (Quick Mode Only)
 
-**If score < 80% in Quick mode, automatically fix and re-run.** Do not wait for user input. This is the key difference between Quick and Full: Quick is self-healing.
+**Precondition: only auto-fix when all runs completed cleanly.** Before triggering auto-fix, check the batch summary. If `failed_runs > 0` or `cancelled_runs > 0`, do NOT auto-fix:
+
+- `summary_score` is computed from completed runs only, so a 0.5 score on a 3-case batch with 2 runs failed at infrastructure level (`status: "failed"`, `credits_cost: 0`, generic `"An unexpected error occurred."`) is not a prompt problem.
+- Patching the system prompt will not fix infra failures and risks degrading prompt quality for the wrong reason.
+- Instead: report the failures separately, list which test cases failed (use `relevance_list_eval_runs`), and ask the user whether to retry the failed cases as-is, simplify them (lower `max_turns`, simpler `simulation_prompt`), or pause to investigate the platform-side issue.
+
+**If all runs completed AND score < 80% in Quick mode, automatically fix and re-run.** Do not wait for user input. This is the key difference between Quick and Full: Quick is self-healing.
 
 1. **Analyze failures.** For each failed rule, read the `reason` from the LLM judge to understand what went wrong
 2. **Patch the system prompt** via `relevance_patch_agent` to strengthen the relevant constraints. Common fixes:
