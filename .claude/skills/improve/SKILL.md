@@ -82,16 +82,16 @@ When all gates PASS:
 2. **Edit the primary file (and any secondary cross-references).** Single `Edit` call where possible. Place new content at the logically correct location -- near related items, at the end of a list, or in a new subsection if no obvious neighbour. **For Gate 5 refinements: modify the existing assertion in place rather than appending a duplicate.** If secondary files need a cross-reference, add a one-line pointer (e.g. "See `<primary file>:<section>`") rather than duplicating content.
 3. **Branch.** `docs/improve-<short-slug>` (3-5 word slug, kebab-case, derived from the candidate). Branch off current `main`.
 4. **Commit.** Message: `docs(improve): <short title>` followed by a one-line body explaining what was captured.
-5. **Delete the PENDING line.** Remove the matching entry from `.local/session-improvements.local.md` so it does not get re-surfaced. Use Python (regex-safe) rather than sed (which breaks on metachars in the description):
+5. **Delete the PENDING line.** Remove the matching entry from `.local/session-improvements.local.md` so it does not get re-surfaced. Use a quoted heredoc with a Python triple-quoted string so the description's content (quotes, backslashes, shell metacharacters) cannot break the call. Substitute `<<<DESC>>>` with the exact one-line description before running:
    ```bash
-   python3 -c "
-   import sys, pathlib
-   path = pathlib.Path('$CLAUDE_PROJECT_DIR/.local/session-improvements.local.md')
-   if path.exists():
-       desc = '<exact one-line description>'
+   python3 - <<'PY'
+   import os, pathlib
+   desc = """<<<DESC>>>"""
+   path = pathlib.Path(os.environ['CLAUDE_PROJECT_DIR']) / '.local/session-improvements.local.md'
+   if path.exists() and desc:
        lines = [l for l in path.read_text().splitlines() if not (l.startswith('PENDING') and desc in l)]
        path.write_text('\n'.join(lines) + ('\n' if lines else ''))
-   "
+   PY
    ```
 
 ### Phase 4: Push and Open the PR

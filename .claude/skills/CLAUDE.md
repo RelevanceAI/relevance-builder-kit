@@ -6,7 +6,7 @@ Slash-command skills for the agent build lifecycle. Invoke with `/{skill-name}`.
 
 | Skill | Command | What it does |
 |-------|---------|-------------|
-| agent-build-patterns | `/agent-build-patterns` | Design philosophy, Unit of Action, 6 system design patterns, contracts, architecture |
+| agent-build-patterns | `/agent-build-patterns` | Design philosophy, 8 patterns (Unit of Action, Note Step, plus 6 system design), contracts, architecture |
 | template-agent | `/template-agent` | Design rubric, checklist, and anti-patterns for a clean starter agent |
 | eval | `/eval` | Auto-generate eval test cases, run platform evals, golden sets, gate criteria |
 | agent-optimiser | `/agent-optimiser` | Analyze a Relevance AI agent or workforce for config, prompt, tool, and credit issues. Recommend ranked optimizations |

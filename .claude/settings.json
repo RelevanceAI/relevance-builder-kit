@@ -2,7 +2,7 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "mcp__relevance-ai-.+__relevance_upsert_tool",
+        "matcher": "mcp__relevance-ai(-.+)?__relevance_upsert_tool",
         "hooks": [
           {
             "type": "command",
@@ -12,7 +12,7 @@
         ]
       },
       {
-        "matcher": "mcp__relevance-ai-.+__relevance_(upsert_agent|patch_agent|save_agent_draft)",
+        "matcher": "mcp__relevance-ai(-.+)?__relevance_(upsert_agent|patch_agent|save_agent_draft)",
         "hooks": [
           {
             "type": "command",
