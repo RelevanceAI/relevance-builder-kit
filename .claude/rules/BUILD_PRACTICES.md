@@ -159,8 +159,10 @@ Full operations matrix, phone agent runtime safeguards, fetch-merge-save code: `
 
 ### Avatars
 
-- Always set SVG avatar icons from the Relevance CDN (not unicode emojis): `https://cdn.jsdelivr.net/gh/RelevanceAI/content-cdn@latest/agents/agent_avatars/agent_avatar_{N}.svg` (range: 10-24). Phone agents: `phone_agent_avatar_{N}.svg`.
+- Always set SVG avatar icons from the Relevance CDN (not unicode emojis): `https://cdn.jsdelivr.net/gh/RelevanceAI/content-cdn@latest/agents/agent_avatars/agent_avatar_{N}.svg` (range: 10-24). Phone agents: `phone_agent_avatar_{N}.svg` (range: 08-12).
 - **Never override an existing agent's avatar.** Only set on initial creation or if the agent doesn't have one.
+
+Enforced at deploy time by `scripts/pre-tool-system-prompt-check.sh` (PreToolUse hook on `relevance_upsert_agent` / `relevance_patch_agent` / `relevance_save_agent_draft`). The hook reads `emoji` from `tool_input.emoji`, `tool_input.config.emoji`, or `tool_input.patch.emoji` and blocks the deploy unless the value starts with `http://` or `https://`. The "never override" rule is guidance only; the hook does not detect existing avatars.
 
 ### Agent Variables (params_schema)
 
