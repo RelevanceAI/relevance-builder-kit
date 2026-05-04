@@ -17,6 +17,9 @@ builds/
 
 `system-prompt.md` is the actual text deployed to the agent's `system_prompt` field. Different rules apply to it than to `agent.md`. See `.claude/rules/DOC_RULES.md` for the formatting rules and lint hooks.
 
-## Worked example
+## Worked examples
 
-See `builds/example/` for a populated reference build (agent.md, system-prompt.md, one tool doc). Copy its shape when starting your first build.
+- `builds/example/` -- single agent: company LinkedIn lookup. agent.md + system-prompt.md + one tool doc. Copy this shape for your first solo build.
+- `builds/workforce-example/` -- multi-agent: lead research workforce with an orchestrator and two parallel research sub-agents. workforce.md + per-agent docs under `workforce-agents/`. Copy this shape for fan-out builds.
+
+Both use placeholder IDs (`<agent-id-1>`, `<workforce-id>`, etc.) since they document structure, not deployments. Replace the placeholders the first time you adapt either as a starting point.
