@@ -46,14 +46,14 @@
 
   ```
   Variable: tone_of_voice
-  Before: "Professional, concise, B2B SaaS — no jargon, no hype."
+  Before: "Professional, concise, B2B SaaS -- no jargon, no hype."
   After:  "Casual, pub-chat, lightly self-deprecating, contractions OK."
 
   Same brief: "Write a 200-word LinkedIn post announcing our Q2 product launch."
 
   ✅ PASS:
-    Output 1 opens "We're excited to announce..." — clean, polished, B2B.
-    Output 2 opens "Right, so we've finally shipped the thing..." — informal,
+    Output 1 opens "We're excited to announce..." -- clean, polished, B2B.
+    Output 2 opens "Right, so we've finally shipped the thing..." -- informal,
     contractions, voice clearly different.
 
   ❌ FAIL:

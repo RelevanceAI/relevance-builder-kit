@@ -1,6 +1,6 @@
 # Agent Triggers
 
-How an agent receives work. The trigger feeds the agent's Unit of Action — one record, one event, one message at a time. Choosing the right trigger pattern matters more than choosing the right trigger type.
+How an agent receives work. The trigger feeds the agent's Unit of Action -- one record, one event, one message at a time. Choosing the right trigger pattern matters more than choosing the right trigger type.
 
 ---
 
@@ -67,7 +67,7 @@ Is this time-based work (reports, digests, monitoring)?
 
 ## `webhook` vs `custom_webhook`
 
-Use `custom_webhook` for almost everything — Zapier, Make, n8n, CRM workflows, any system where the payload doesn't already match what you want the agent to see.
+Use `custom_webhook` for almost everything -- Zapier, Make, n8n, CRM workflows, any system where the payload doesn't already match what you want the agent to see.
 
 | Feature                                             | `webhook` | `custom_webhook` |
 |-----------------------------------------------------|-----------|------------------|
@@ -195,7 +195,7 @@ Trigger creation returns a webhook URL. POST any JSON to it; `message_template` 
 }
 ```
 
-`message` is the literal first message the agent sees on every run. Make it imperative ("Generate X") and self-contained — the agent has no context beyond this.
+`message` is the literal first message the agent sees on every run. Make it imperative ("Generate X") and self-contained -- the agent has no context beyond this.
 
 ---
 
@@ -215,12 +215,12 @@ Triggers are identified by `document_id`, which comes from `relevance_list_agent
 
 ## Gotchas
 
-- **Slack channel IDs are not names.** `slack_retrieve_message` and the Slack trigger both want `C...` IDs. Tools that resolve names work for public channels only — private (`G...`) and DMs (`D...`) need explicit IDs.
+- **Slack channel IDs are not names.** `slack_retrieve_message` and the Slack trigger both want `C...` IDs. Tools that resolve names work for public channels only -- private (`G...`) and DMs (`D...`) need explicit IDs.
 - **Recurring `hour` is required** even for `minutely` and `hourly` frequencies. The platform validates the field; `09:00` is a safe default if the value is irrelevant.
 - **`custom_webhook` `unique_id` enables idempotency.** If the same upstream event fires twice with the same `unique_id`, the second run is suppressed. Use this when integrating with at-least-once delivery systems (Zapier retries, CRM workflow re-fires).
-- **`message` for recurring triggers is the entire first input.** It is not a label. The agent must be able to act on this string alone — no implicit context.
+- **`message` for recurring triggers is the entire first input.** It is not a label. The agent must be able to act on this string alone -- no implicit context.
 - **The trigger payload is the agent's first message.** Anything not in `message_template` won't reach the agent. Map every field the agent needs to reason about.
-- **`__conversation_id`, `__mas_id`, `__mas_store_id` are not set by triggers** — they're injected at runtime by the agent runner. To use them in tools, declare them in `params_schema` per `.claude/rules/PLATFORM_MECHANICS.md` § "Platform-Injected System Variables".
+- **`__conversation_id`, `__mas_id`, `__mas_store_id` are not set by triggers** -- they're injected at runtime by the agent runner. To use them in tools, declare them in `params_schema` per `.claude/rules/PLATFORM_MECHANICS.md` § "Platform-Injected System Variables".
 
 ---
 

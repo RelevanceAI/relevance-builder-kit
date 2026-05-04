@@ -22,9 +22,9 @@ The question every builder arrives with: **"do I build one agent, or a workforce
 - The job is one Unit of Action with one or two tools
 - The "phases" are really just sequential tool calls (research → respond) and one prompt can guide both
 - You're early in the build and don't have evidence one prompt is overloaded
-- The output of the agent has to flow back into a chat experience without going through another system. *(Workforce outputs don't naturally route into chat replies — see "When NOT to Use a Workforce" below.)*
+- The output of the agent has to flow back into a chat experience without going through another system. *(Workforce outputs don't naturally route into chat replies -- see "When NOT to Use a Workforce" below.)*
 
-> **Field heuristic:** workforces are for *tasks* (the agent runs a job and produces an output that another system / agent / human picks up). For *chat* (the agent is the user's interface), prefer a single agent — and consolidate any sub-capabilities into that agent's tools rather than fanning out to a workforce, until you genuinely need parallelism or specialist reuse.
+> **Field heuristic:** workforces are for *tasks* (the agent runs a job and produces an output that another system / agent / human picks up). For *chat* (the agent is the user's interface), prefer a single agent -- and consolidate any sub-capabilities into that agent's tools rather than fanning out to a workforce, until you genuinely need parallelism or specialist reuse.
 
 ---
 
@@ -34,7 +34,7 @@ Real-world failure modes worth flagging up front:
 
 1. **Pure chat experiences.** If the user is talking to "the agent" in a chat surface, the workforce-task abstraction sits awkwardly between the user message and the response. Single agents are the cleaner shape. Use a workforce only when the chat agent's output needs to flow into another agent / system.
 2. **Premature decomposition.** Splitting a 200-line prompt into three 80-line agents because the prompt felt long is usually wrong. Cost goes up (more LLM calls, threading overhead), debugging gets harder, and you're now testing handoffs as well as reasoning. Wait for evidence: failing evals, prompt drift, observable confusion.
-3. **Single-skill work.** If every "agent" in your proposed workforce is doing variations of the same thing (e.g. five "researchers" each with slightly different prompts), you probably want one agent that branches in its prompt or one agent invoked multiple times — not five agents.
+3. **Single-skill work.** If every "agent" in your proposed workforce is doing variations of the same thing (e.g. five "researchers" each with slightly different prompts), you probably want one agent that branches in its prompt or one agent invoked multiple times -- not five agents.
 4. **Tasks with one tool call and one response.** A workforce is overkill. Build one agent with the tool attached.
 
 ---
@@ -52,7 +52,7 @@ Real-world failure modes worth flagging up front:
 
 ### 2. Edge / connection types (workforce only)
 
-A single agent has no edges — it just has tools. A workforce uses edges to define who hands work to whom. Two edge types:
+A single agent has no edges -- it just has tools. A workforce uses edges to define who hands work to whom. Two edge types:
 
 | API name           | UI name        | Who decides when it fires    | Use for                                                       |
 |--------------------|----------------|------------------------------|---------------------------------------------------------------|
@@ -67,7 +67,7 @@ Full mechanics in `edges.md`.
 |--------------------------|-------------------------------------------|-----------------------------------------------------------------------------|
 | Conversation model       | One conversation, one task ID            | One workforce-task ID, plus one or more agent conversation IDs nested inside |
 | Context across phases    | Always shared (same conversation)         | Configurable per edge: `always-same` shares context; `always-create-new` isolates |
-| Sub-agent visibility     | n/a                                       | If `always-create-new`, parent reads only the sub-agent's response text — *cannot* re-query |
+| Sub-agent visibility     | n/a                                       | If `always-create-new`, parent reads only the sub-agent's response text -- *cannot* re-query |
 
 The `always-create-new` "one-way mirror" is the biggest gotcha: orchestrators can't access sub-agent tool call results, only the final response text. Sub-agents must self-report URLs / IDs / status in their response text. See `edges.md` § "always-create-new is a one-way mirror".
 
@@ -90,7 +90,7 @@ The actual trigger types and config schemas are the same. The difference is *whe
 | Forced human-in-the-loop     | Per-tool `action_behaviour: "always-ask"` on the agent        | Per-edge `action_behaviour: "always-ask"` on `tool-call` edges           |
 | Effect of refusal            | Conversation pauses                                            | Workforce pauses with state `pending-approval` or `errored-pending-approval` |
 
-When an approval-gated tool fires inside a workforce, the parent agent's task pauses, not just the sub-agent's. Watch this in long pipelines — one approval blocks downstream nodes.
+When an approval-gated tool fires inside a workforce, the parent agent's task pauses, not just the sub-agent's. Watch this in long pipelines -- one approval blocks downstream nodes.
 
 ### 6. Testing / Evals
 
@@ -100,10 +100,10 @@ When an approval-gated tool fires inside a workforce, the parent agent's task pa
 | `resource_id`              | Agent ID                                       | Workforce ID                                                             |
 | What runs per scenario     | One agent conversation                         | One full workforce task (multiple agent conversations)                  |
 | Tool simulation shape      | `tool_configs: { <action_id>: { ... } }`       | `agent_configs: { <agent_id>: { tool_configs: { ... } } }`               |
-| Per-agent simulation       | n/a (only one agent)                           | Yes — different agents in the workforce can have different tool mocks   |
+| Per-agent simulation       | n/a (only one agent)                           | Yes -- different agents in the workforce can have different tool mocks   |
 | Cost per scenario          | 1 conversation + simulator + judge             | N agent conversations + simulator + judge per rule (more credits)        |
 
-Same tools (`relevance_create_eval_test_set`, `relevance_run_evaluation`, etc.), just with `resource_type` switched. Workforce evals cost more — fewer scenarios, sharper rules. See `build-kit/evals-and-monitoring/test-suites.md` and `tool-simulation.md`.
+Same tools (`relevance_create_eval_test_set`, `relevance_run_evaluation`, etc.), just with `resource_type` switched. Workforce evals cost more -- fewer scenarios, sharper rules. See `build-kit/evals-and-monitoring/test-suites.md` and `tool-simulation.md`.
 
 ### 7. Debugging
 
@@ -115,7 +115,7 @@ Same tools (`relevance_create_eval_test_set`, `relevance_run_evaluation`, etc.),
 | State value to check                | `finished_state` on the conversation                  | `workforce_state` on the workforce-task (5+ values; see `setup.md`)       |
 | Common stuck states                 | Hit `autonomy_limit`, waiting on approval             | `pending-approval`, `errored-pending-approval`, `escalated`, `execution-limit-reached` |
 
-For workforces, also pull the individual agent conversation by passing its `conversation_id` (from the workforce task) as `taskId` to the agent task tools — useful when the workforce trace doesn't surface enough detail.
+For workforces, also pull the individual agent conversation by passing its `conversation_id` (from the workforce task) as `taskId` to the agent task tools -- useful when the workforce trace doesn't surface enough detail.
 
 ### 8. Cost shape
 
@@ -126,7 +126,7 @@ For workforces, also pull the individual agent conversation by passing its `conv
 | Context cost                 | All context lives in one conversation                 | `always-same` edges duplicate context across nodes (cache helps somewhat) |
 | Observability cost           | One conversation per task                             | One workforce task + N child tasks (more rows in analytics)               |
 
-Workforces are not free relative to single agents — extra threading, context duplication on `always-same`, judge multipliers in evals. Worth it when the design wins outweigh the cost.
+Workforces are not free relative to single agents -- extra threading, context duplication on `always-same`, judge multipliers in evals. Worth it when the design wins outweigh the cost.
 
 ### 9. Observability and analytics
 
@@ -148,7 +148,7 @@ Workforce-level observability tells you *which workforce ran which task*. Agent-
 | Wall-clock timeout        | Tied to task / conversation timeout               | Workforce-task timeout (longer than agent task)            |
 | Concurrency               | Per-agent (one in-flight task model)              | Workforce can have many tasks in flight; each task is isolated |
 
-The dispatch limit on workforces is the most common cause of "stuck" or "execution-limit-reached" workforce-tasks — usually means the orchestrator is in a loop or fan-out is unbounded.
+The dispatch limit on workforces is the most common cause of "stuck" or "execution-limit-reached" workforce-tasks -- usually means the orchestrator is in a loop or fan-out is unbounded.
 
 ---
 
@@ -184,7 +184,7 @@ Migration pattern:
 4. Re-run the eval suite with `resource_type: "agent"`
 5. Decommission the workforce
 
-Both directions are reversible. Don't agonise — migrate when the evidence is clear.
+Both directions are reversible. Don't agonise -- migrate when the evidence is clear.
 
 ---
 
@@ -194,15 +194,15 @@ Both directions are reversible. Don't agonise — migrate when the evidence is c
 
 - **Prompt bloat.** Adding a section every time a new edge case shows up. Symptom: prompts past ~5K characters with overlapping rules. Fix: split into a workforce or move static rules to `params` / knowledge.
 - **Tool overload.** 10+ tools attached and the agent picks the wrong one. Symptom: high "tool selection" eval failure rate. Fix: sharpen tool descriptions, or split into a workforce where each agent has 2-4 focused tools.
-- **Implicit phases.** The prompt has "first do X, then do Y" — but the LLM mixes them. Fix: enforce phases via a Note Step in tools, or split into a workforce.
+- **Implicit phases.** The prompt has "first do X, then do Y" -- but the LLM mixes them. Fix: enforce phases via a Note Step in tools, or split into a workforce.
 
 ### Workforce gotchas
 
 - **`always-create-new` data loss.** Orchestrator can only read sub-agent response text. Sub-agents that produce URLs/files must self-report in their response. See `edges.md`.
-- **`additionalProperties: false` on tool-call edges.** 100% failure mode — the runtime injects `_subagent_params` and the validator rejects it. Always `additionalProperties: true`.
+- **`additionalProperties: false` on tool-call edges.** 100% failure mode -- the runtime injects `_subagent_params` and the validator rejects it. Always `additionalProperties: true`.
 - **Direct `relevance_trigger_agent_sync` on the orchestrator.** Tool-call edges only populate the orchestrator's runtime tool list when triggered through the workforce. Direct agent-trigger shows `toolCalls: []`.
 - **Forgetting the trigger edge.** When you specify `edges` explicitly, you own the trigger edge too. Forget it and the workforce publishes but routes nothing.
-- **Chat-mode workforce expecting standard chat output.** Chat workforces have a different shape than single chat agents — the user message arrives at the trigger node, not the agent. UX often needs adjustment.
+- **Chat-mode workforce expecting standard chat output.** Chat workforces have a different shape than single chat agents -- the user message arrives at the trigger node, not the agent. UX often needs adjustment.
 - **MCP tools "missing" inside a workforce node.** Known platform issue: occasionally tools attached to an agent via MCP don't surface when the agent runs inside a workforce. Workaround: re-attach via the UI, or use `relevance_attach_tools_to_agent` then republish before triggering the workforce.
 - **Same agent in multiple nodes share simulation config.** If your workforce has the same agent at two nodes, you can't simulate its tools differently per node. Either accept shared mocks or duplicate the agent.
 
@@ -238,4 +238,4 @@ Does the work have multiple distinct skills (research + write + review)?
 - `build-kit/evals-and-monitoring/tool-simulation.md` -- the `tool_configs` vs `agent_configs.tool_configs` shape difference
 - `playbooks/multi-agent-orchestration.md` -- orchestrator design philosophy
 - `.claude/rules/PLATFORM_MECHANICS.md` § "Workforce Architecture" -- platform mechanics summary
-- Public docs: [Workforces concept](https://relevanceai.com/docs) (UI calls them "AI Connection" / "Next Step" — the API names are `tool-call` / `forced-handover`)
+- Public docs: [Workforces concept](https://relevanceai.com/docs) (UI calls them "AI Connection" / "Next Step" -- the API names are `tool-call` / `forced-handover`)

@@ -1,6 +1,6 @@
 # Workforce Edges
 
-Edges are how nodes in a workforce graph hand data and control to each other. Edge type and threading behaviour are the two highest-leverage decisions in any workforce design — get them wrong and the workforce either deadlocks, loops, or silently drops context.
+Edges are how nodes in a workforce graph hand data and control to each other. Edge type and threading behaviour are the two highest-leverage decisions in any workforce design -- get them wrong and the workforce either deadlocks, loops, or silently drops context.
 
 For the lifecycle (create / trigger / debug), see `setup.md`. For the mental model and overall workforce concepts, see `workforce-patterns.md`.
 
@@ -27,8 +27,8 @@ For the lifecycle (create / trigger / debug), see `setup.md`. For the mental mod
 
 Two independent decisions per edge:
 
-1. **Edge type** (`forced-handover` vs `tool-call`) — who decides when this edge fires?
-2. **Threading behaviour** (`always-same` vs `always-create-new`) — does the target see the source's conversation context?
+1. **Edge type** (`forced-handover` vs `tool-call`) -- who decides when this edge fires?
+2. **Threading behaviour** (`always-same` vs `always-create-new`) -- does the target see the source's conversation context?
 
 ---
 
@@ -58,7 +58,7 @@ The UI names are what builders see in the visual canvas; the API names are what 
 | tool → tool        | ✅                | ❌          |
 | condition → agent  | ✅                | ❌          |
 
-**Rule:** `tool-call` is only valid when the source is an `agent` — only agents can decide.
+**Rule:** `tool-call` is only valid when the source is an `agent` -- only agents can decide.
 
 ---
 
@@ -72,7 +72,7 @@ Is this edge in a deterministic pipeline (always runs in this order)?
           NO  → Re-shape the graph: this is probably a forced-handover with a condition node upstream
 ```
 
-**Default to `forced-handover`.** Use `tool-call` only when the source agent genuinely needs to choose at runtime — for example, an orchestrator that routes based on the input, or an agent that may or may not need a follow-up step.
+**Default to `forced-handover`.** Use `tool-call` only when the source agent genuinely needs to choose at runtime -- for example, an orchestrator that routes based on the input, or an agent that may or may not need a follow-up step.
 
 If a `tool-call` edge fires every single time, replace it with `forced-handover`. The LLM-decision overhead is wasted.
 
@@ -93,13 +93,13 @@ When an orchestrator calls a sub-agent with `always-create-new`, the sub-agent r
 
 - The orchestrator can read **only the sub-agent's response text**.
 - It cannot access the sub-agent's tool call results, artifacts, or internal state.
-- It cannot re-query the sub-agent — every call creates a fresh thread with no memory.
+- It cannot re-query the sub-agent -- every call creates a fresh thread with no memory.
 
 **Anti-pattern:**
 
 ```
 Orchestrator → Writer: "Write an article about X"      // Writer creates DOCX, gets URL
-Orchestrator → Writer: "What was the DOCX URL?"        // NEW thread — Writer has no memory
+Orchestrator → Writer: "What was the DOCX URL?"        // NEW thread -- Writer has no memory
 ```
 
 **Correct:** make the sub-agent self-report all important data in its response text:
@@ -227,7 +227,7 @@ Set `action_behaviour: "always-ask"` on this edge. Each call surfaces a human ap
 
 ## Edge Update Semantics
 
-`relevance_update_workforce` **merges**, it doesn't replace. To remove a field, you must explicitly set it to its new value — omitting it does not clear it.
+`relevance_update_workforce` **merges**, it doesn't replace. To remove a field, you must explicitly set it to its new value -- omitting it does not clear it.
 
 To delete an edge entirely, fetch the workforce, remove the edge from the array, and save.
 

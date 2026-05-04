@@ -1,6 +1,6 @@
 # Tool Simulation
 
-When an eval scenario runs, by default every tool call hits the real external system — costing credits, sending emails, updating CRMs. Tool simulation lets you override individual tool outputs with deterministic stub responses so the agent reasons against a simulated world.
+When an eval scenario runs, by default every tool call hits the real external system -- costing credits, sending emails, updating CRMs. Tool simulation lets you override individual tool outputs with deterministic stub responses so the agent reasons against a simulated world.
 
 For test set / scenario design, see `test-suites.md`. For evaluator rule types, see `llm-as-judge.md`.
 
@@ -8,7 +8,7 @@ For test set / scenario design, see `test-suites.md`. For evaluator rule types, 
 
 ## What to Simulate
 
-Simulate **external integrations** — anything that calls an API, hits a database, or has side effects.
+Simulate **external integrations** -- anything that calls an API, hits a database, or has side effects.
 
 | Simulate                                | Don't simulate                                          |
 |-----------------------------------------|---------------------------------------------------------|
@@ -29,8 +29,8 @@ If a tool's only step is a `prompt_completion`, that reasoning belongs in the ag
 |--------------------------------------------------------------------------------|------------------------------------------------------------------------|
 | Create "Score Lead" tool (single LLM step) → simulate it                       | Put scoring logic in agent system prompt → eval the agent              |
 | Create "Draft Email" tool (single LLM step) → simulate it                      | Put writing logic in agent system prompt → eval the agent              |
-| Simulate "Lookup Company" tool (real API call)                                 | ✅ Correct — tool calls an external service                            |
-| Simulate "Enrich + Summarize" (real API + `prompt_completion` post-processing) | ✅ Correct — the API part is real-world, the LLM post-processing runs naturally |
+| Simulate "Lookup Company" tool (real API call)                                 | ✅ Correct -- tool calls an external service                            |
+| Simulate "Enrich + Summarize" (real API + `prompt_completion` post-processing) | ✅ Correct -- the API part is real-world, the LLM post-processing runs naturally |
 
 **Exception:** tools that combine real external work with `prompt_completion` are fine to simulate. The anti-pattern is only when LLM is the *only* step.
 
@@ -48,11 +48,11 @@ Tool simulation config can live at three places, with strict precedence:
 
 **Rules:**
 - Scenario-level config always wins.
-- You cannot pass `tool_simulation_config` to `relevance_run_evaluation` together with `test_set_id` — the platform returns 400. Set test-set or scenario configs ahead of the run instead.
+- You cannot pass `tool_simulation_config` to `relevance_run_evaluation` together with `test_set_id` -- the platform returns 400. Set test-set or scenario configs ahead of the run instead.
 
 **When to use test-set-level config:** every scenario in the suite needs the same tool mocks (e.g. all 8 scenarios mock the same CRM lookup). Saves repeating the same block on every test case. Individual scenarios can still override.
 
-**When to use scenario-level config:** the mock differs per scenario (one scenario gets a "no results" CRM response, another gets a populated one). This is also the only way to set per-agent simulations in a workforce — see below.
+**When to use scenario-level config:** the mock differs per scenario (one scenario gets a "no results" CRM response, another gets a populated one). This is also the only way to set per-agent simulations in a workforce -- see below.
 
 ---
 
@@ -223,7 +223,7 @@ relevance_set_eval_test_case_simulation_config({
 
 This is **full replacement**. Always pass the complete config, not a partial.
 
-For test-set-level simulation, use `relevance_update_eval_test_set` (which uses patch semantics — only sends the fields you change).
+For test-set-level simulation, use `relevance_update_eval_test_set` (which uses patch semantics -- only sends the fields you change).
 
 ---
 
@@ -265,7 +265,7 @@ For integration tests against production-shaped data, run a small subset of scen
 
 ### "Cannot provide tool_simulation_config when using test_set_id"
 
-You passed both `tool_simulation_config` and `test_set_id` to `relevance_run_evaluation`. Remove `tool_simulation_config` from the call — when running a whole test set, simulation comes from the test set's own config or individual test cases.
+You passed both `tool_simulation_config` and `test_set_id` to `relevance_run_evaluation`. Remove `tool_simulation_config` from the call -- when running a whole test set, simulation comes from the test set's own config or individual test cases.
 
 ### "The agent ignored my simulated output"
 
@@ -278,7 +278,7 @@ Most common causes:
 
 ### "Simulated output doesn't match the tool's real schema"
 
-The `simulation_prompt` is too vague. Sharpen it to specify field names, types, and a worked example. The judge LLM that generates simulated output is small — be explicit about shape.
+The `simulation_prompt` is too vague. Sharpen it to specify field names, types, and a worked example. The judge LLM that generates simulated output is small -- be explicit about shape.
 
 ### "Per-call indexing isn't taking effect"
 

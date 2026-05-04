@@ -69,7 +69,7 @@ A starter agent should pass all 12 to ship. See `checklist.md` for the tactical 
 
 ## Build Flow
 
-The order matters. Output format constrains everything downstream — pick it first.
+The order matters. Output format constrains everything downstream -- pick it first.
 
 ```
 1. Read any existing sandbox agent the user has
@@ -141,11 +141,11 @@ Who consumes the agent's output?
           later than to extract a usable doc from a JSON envelope nobody loves.
 ```
 
-**Pick before tool selection.** A markdown-output agent often needs Google Search + Extract Text + a knowledge-table read. A JSON-output agent often needs different tools (CRM lookup, structured enrichment) — and a much shorter prompt because there's no prose-style writing to constrain.
+**Pick before tool selection.** A markdown-output agent often needs Google Search + Extract Text + a knowledge-table read. A JSON-output agent often needs different tools (CRM lookup, structured enrichment) -- and a much shorter prompt because there's no prose-style writing to constrain.
 
 **Pick before data architecture.** Reference examples in a markdown agent live in a knowledge table the agent reads to anchor voice. Reference examples in a JSON agent live in a knowledge table the agent reads to anchor schema choices. Different tables, different rows, different prompt sections.
 
-**If a stakeholder lists 4 output types** (emails, one-pagers, talking points, pitch outlines), pick the one that demos the build's value best — usually the longest-form, most-skeptical-stakeholder-friendly artefact. See anti-pattern `list-order-as-priority`.
+**If a stakeholder lists 4 output types** (emails, one-pagers, talking points, pitch outlines), pick the one that demos the build's value best -- usually the longest-form, most-skeptical-stakeholder-friendly artefact. See anti-pattern `list-order-as-priority`.
 
 ### Placeholder Tool Verification (Step 6)
 
@@ -163,7 +163,7 @@ When you've used `{{_placeholder.TOOL <name>}}` in the prompt to reserve roadmap
 
 3. In the agent config drawer, scan tools list
    → Real attached tools show as connected with their action ID
-   → Placeholders should NOT appear in the tools list — they're prompt-only
+   → Placeholders should NOT appear in the tools list -- they're prompt-only
      reservations until a real tool is connected
 
 4. Run a smoke test brief that does NOT trigger the placeholder capability
@@ -181,7 +181,7 @@ When you've used `{{_placeholder.TOOL <name>}}` in the prompt to reserve roadmap
    → This is your "before connecting the real tool" baseline behaviour
 ```
 
-Avoid placeholders entirely if the agent is going to the marketplace — validation rejects `"Agent prompt contains placeholder tools"`. See `build-kit/agents/prompt/placeholder-tools.md` for full mechanics.
+Avoid placeholders entirely if the agent is going to the marketplace -- validation rejects `"Agent prompt contains placeholder tools"`. See `build-kit/agents/prompt/placeholder-tools.md` for full mechanics.
 
 ## Files in this skill
 
