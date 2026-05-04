@@ -21,7 +21,7 @@ The remote MCP loads its operational skills on demand. They cover:
 - Agent usage analytics
 - Agent evaluations and test cases
 
-These skills are not files in this repo. Claude loads them dynamically from the MCP server when the conversation needs them.
+These skills are not files in this repo. Claude loads them dynamically from the MCP server when the conversation needs them. To see what's currently available in your session, ask Claude *"what relevance-ai skills are available?"* and it will surface the list from the live MCP connection.
 
 ## Routing
 
