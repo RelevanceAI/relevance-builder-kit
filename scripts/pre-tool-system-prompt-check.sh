@@ -28,6 +28,7 @@ fi
 
 SYSTEM_PROMPT=$(printf '%s' "$INPUT" | jq -r '
   .tool_input.system_prompt //
+  .tool_input.patch.system_prompt //
   .tool_input.config.system_prompt //
   empty
 ' 2>/dev/null)
