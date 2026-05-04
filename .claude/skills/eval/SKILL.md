@@ -399,11 +399,73 @@ After the auto-fix loop completes (or in Full mode where there is no auto-fix), 
 
 ---
 
-## Phase 6: Enable Performance Monitoring (Optional)
+## Phase 6: Configure Publish Gate (Optional but recommended)
+
+Once an eval has passed, wire the test set as the agent's publish gate. Subsequent publishes will run this set automatically and block if the threshold isn't met. This is the discipline that turns a one-off eval into a recurring quality bar; per `.claude/rules/BUILD_PRACTICES.md` "Golden Set in Publish Settings", every production agent should have one configured.
+
+### When this phase fires
+
+- **Eval must have passed at the configured threshold.** Do NOT offer to wire a failing test set as a gate.
+- **Use the golden set, not the adversarial set.** If the test set just created is adversarial-only, do not propose it; suggest the user run a separate Full eval against a golden set first.
+- Quick mode (3 cases) is usually too thin for a production gate. Mention this to the user; recommend running Full mode at least once before relying on the gate.
+
+### Step 1: Confirm with the user
+
+Ask: **"Configure this test set as the agent's publish gate? Future publishes will run it automatically and block if the score is below the threshold."**
+
+If the user declines, skip to Phase 7.
+
+If yes, confirm the gate parameters:
+
+- **Test set ID:** the one created in Phase 3.
+- **Threshold score:** default `100` (all rules pass) for golden sets per BUILD_PRACTICES. Confirm with user.
+- **Block on failure:** default `true`. Confirm with user.
+
+### Step 2: Fetch the full agent config
+
+`default_eval_config` lives on the agent's main config and requires PUT semantics to set. Fetch the complete config first:
+
+```
+relevance_get_agent(agentId: "{agent_id}", summary: false)
+```
+
+### Step 3: Merge default_eval_config and save
+
+`relevance_save_agent_draft` has PUT semantics: any field you omit from the payload is wiped. Include the full fetched config plus the new `default_eval_config`:
+
+```json
+"default_eval_config": {
+  "test_set_ids": ["<test_set_display_id>"],
+  "threshold_score": 100,
+  "block_on_failure": true
+}
+```
+
+If a `default_eval_config` already exists on the agent, ask the user: **replace** with the new test set, or **add** to the existing `test_set_ids` list (multiple test sets all run on publish, all must pass).
+
+Save via:
+
+```
+relevance_save_agent_draft(agentId: "{agent_id}", config: <full_merged_config>)
+```
+
+The system-prompt PreToolUse hook will scan the existing prompt; this passes cleanly assuming the prompt was already compliant.
+
+### Step 4: Verify
+
+Re-fetch the agent and confirm `default_eval_config` is set as expected. Report:
+
+- Publish gate enabled with test set `{id}` at threshold `{score}%`
+- `block_on_failure: {true|false}`
+- Future publishes will run this set automatically and block if the threshold isn't met
+
+---
+
+## Phase 7: Enable Performance Monitoring (Optional)
 
 After reporting results, ask: **"Would you like to enable ongoing performance monitoring for production conversations?"**
 
-If the user declines, skip to Phase 7.
+If the user declines, skip to Phase 8.
 
 If yes:
 
@@ -471,7 +533,7 @@ Report what was enabled:
 
 ---
 
-## Phase 7: Update Build Docs
+## Phase 8: Update Build Docs
 
 Append an `## Evals` section to the build's `agent.md` file (create if it doesn't exist):
 
@@ -484,6 +546,14 @@ Append an `## Evals` section to the build's `agent.md` file (create if it doesn'
 |------|------|-------|-------------|----------|
 | {date} | {Quick / Full} | {score}% | `{test_set_id}` | `{batch_id}` |
 
+### Publish Gate
+
+- **Status:** {Enabled / Disabled}
+- **Test Set ID:** `{test_set_id}`
+- **Threshold:** {score}%
+- **Block on failure:** {true / false}
+- **Configured Date:** {date}
+
 ### Performance Monitoring
 
 - **Status:** {Enabled / Disabled}
@@ -492,7 +562,7 @@ Append an `## Evals` section to the build's `agent.md` file (create if it doesn'
 - **Enabled Date:** {date}
 ```
 
-If the section already exists, append a new row to the run history table and update the monitoring section if changed.
+If the section already exists, append a new row to the run history table and update the gate / monitoring sections if changed.
 
 ---
 
